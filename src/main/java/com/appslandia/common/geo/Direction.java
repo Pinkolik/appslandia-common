@@ -84,18 +84,17 @@ public enum Direction {
 		symbol = symbol.toUpperCase(Locale.ENGLISH);
 
 		switch (symbol) {
-		case "E":
-			return EAST;
 		case "N":
 			return NORTH;
+		case "E":
+			return EAST;
 		case "S":
 			return SOUTH;
 		case "W":
 			return WEST;
 		default:
-			break;
+			throw new IllegalArgumentException("symbol is invalid (value=" + symbol + ")");
 		}
-		throw new IllegalArgumentException("symbol is invalid (value=" + symbol + ")");
 	}
 
 	public static Direction random() {
