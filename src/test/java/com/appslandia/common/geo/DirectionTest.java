@@ -73,20 +73,20 @@ public class DirectionTest {
 
 	@Test
 	public void test_right_n() {
-		Assert.assertEquals(Direction.EAST.right(0), Direction.EAST);
-		Assert.assertEquals(Direction.SOUTH.right(0), Direction.SOUTH);
-		Assert.assertEquals(Direction.WEST.right(0), Direction.WEST);
-		Assert.assertEquals(Direction.NORTH.right(0), Direction.NORTH);
+		Assert.assertEquals(Direction.EAST.turn(0), Direction.EAST);
+		Assert.assertEquals(Direction.SOUTH.turn(0), Direction.SOUTH);
+		Assert.assertEquals(Direction.WEST.turn(0), Direction.WEST);
+		Assert.assertEquals(Direction.NORTH.turn(0), Direction.NORTH);
 
-		Assert.assertEquals(Direction.EAST.right(4), Direction.EAST);
-		Assert.assertEquals(Direction.SOUTH.right(4), Direction.SOUTH);
-		Assert.assertEquals(Direction.WEST.right(4), Direction.WEST);
-		Assert.assertEquals(Direction.NORTH.right(4), Direction.NORTH);
-
-		Assert.assertEquals(Direction.EAST.right(1), Direction.SOUTH);
-		Assert.assertEquals(Direction.SOUTH.right(1), Direction.WEST);
-		Assert.assertEquals(Direction.WEST.right(1), Direction.NORTH);
-		Assert.assertEquals(Direction.NORTH.right(1), Direction.EAST);
+		Assert.assertEquals(Direction.EAST.turn(1), Direction.SOUTH);
+		Assert.assertEquals(Direction.SOUTH.turn(1), Direction.WEST);
+		Assert.assertEquals(Direction.WEST.turn(1), Direction.NORTH);
+		Assert.assertEquals(Direction.NORTH.turn(1), Direction.EAST);
+		
+		Assert.assertEquals(Direction.EAST.turn(4), Direction.EAST);
+		Assert.assertEquals(Direction.SOUTH.turn(4), Direction.SOUTH);
+		Assert.assertEquals(Direction.WEST.turn(4), Direction.WEST);
+		Assert.assertEquals(Direction.NORTH.turn(4), Direction.NORTH);
 	}
 
 	@Test
@@ -99,19 +99,15 @@ public class DirectionTest {
 
 	@Test
 	public void test_left_n() {
-		Assert.assertEquals(Direction.EAST.left(0), Direction.EAST);
-		Assert.assertEquals(Direction.SOUTH.left(0), Direction.SOUTH);
-		Assert.assertEquals(Direction.WEST.left(0), Direction.WEST);
-		Assert.assertEquals(Direction.NORTH.left(0), Direction.NORTH);
-
-		Assert.assertEquals(Direction.EAST.left(4), Direction.EAST);
-		Assert.assertEquals(Direction.SOUTH.left(4), Direction.SOUTH);
-		Assert.assertEquals(Direction.WEST.left(4), Direction.WEST);
-		Assert.assertEquals(Direction.NORTH.left(4), Direction.NORTH);
-
-		Assert.assertEquals(Direction.EAST.left(1), Direction.NORTH);
-		Assert.assertEquals(Direction.NORTH.left(1), Direction.WEST);
-		Assert.assertEquals(Direction.WEST.left(1), Direction.SOUTH);
-		Assert.assertEquals(Direction.SOUTH.left(1), Direction.EAST);
+		
+		Assert.assertEquals(Direction.EAST.turn(-1), Direction.NORTH);
+		Assert.assertEquals(Direction.NORTH.turn(-1), Direction.WEST);
+		Assert.assertEquals(Direction.WEST.turn(-1), Direction.SOUTH);
+		Assert.assertEquals(Direction.SOUTH.turn(-1), Direction.EAST);
+		
+		Assert.assertEquals(Direction.EAST.turn(-4), Direction.EAST);
+		Assert.assertEquals(Direction.SOUTH.turn(-4), Direction.SOUTH);
+		Assert.assertEquals(Direction.WEST.turn(-4), Direction.WEST);
+		Assert.assertEquals(Direction.NORTH.turn(-4), Direction.NORTH);
 	}
 }

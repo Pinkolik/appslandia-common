@@ -32,9 +32,11 @@ import com.appslandia.common.utils.AssertUtils;
  */
 public enum Direction {
 
-	EAST("E"), NORTH("N"), SOUTH("S"), WEST("W");
+	NORTH("N"), EAST("E"), SOUTH("S"), WEST("W");
 
 	final String symbol;
+
+	static final Direction[] DIRECTIONS = Direction.values();
 
 	private Direction(String symbol) {
 		this.symbol = symbol;
@@ -53,97 +55,28 @@ public enum Direction {
 	}
 
 	public Direction reverse() {
-		return left(2);
+		return turn(2);
 	}
 
-	/**
-	 * The direction 90*n-degrees to the right or left.
-	 * 
-	 * @param n
-	 * @return
-	 */
-	public Direction move(int n) {
-		if (n == 0)
-			return this;
-		if (n > 0)
-			return right(n);
-		return left(-n);
-	}
-
-	/**
-	 * The direction 90-degrees to the right.
-	 * 
-	 * @return
-	 */
 	public Direction right() {
-		switch (this) {
-		case EAST:
-			return SOUTH;
-		case SOUTH:
-			return WEST;
-		case WEST:
-			return NORTH;
-		case NORTH:
-			return EAST;
-		default:
-			throw new Error();
-		}
+		return turn(1);
 	}
 
-	/**
-	 * The direction 90*n-degrees to the right.
-	 * 
-	 * @param n
-	 * @return
-	 */
-	public Direction right(int n) {
-		AssertUtils.assertNonNegative(n);
-		if (n == 0)
-			return this;
-
-		int m = n % 4;
-		Direction dir = this;
-		while (m-- > 0)
-			dir = dir.right();
-		return dir;
-	}
-
-	/**
-	 * The direction 90-degrees to the left.
-	 * 
-	 * @return
-	 */
 	public Direction left() {
-		switch (this) {
-		case EAST:
-			return NORTH;
-		case NORTH:
-			return WEST;
-		case WEST:
-			return SOUTH;
-		case SOUTH:
-			return EAST;
-		default:
-			throw new Error();
-		}
+		return turn(-1);
 	}
 
-	/**
-	 * The direction 90*n-degrees to the left.
-	 * 
-	 * @param n
-	 * @return
-	 */
-	public Direction left(int n) {
-		AssertUtils.assertNonNegative(n);
+	public Direction turn(int n) {
 		if (n == 0)
 			return this;
 
-		int m = n % 4;
-		Direction dir = this;
-		while (m-- > 0)
-			dir = dir.left();
-		return dir;
+		// 0:N, 1:E, 2:S, 3:W
+		int next = (this.ordinal() + n) % 4;
+
+		if (next < 0) {
+			next = (next + 4) % 4;
+		}
+		return DIRECTIONS[next];
 	}
 
 	public static Direction parseValue(String symbol) {
@@ -167,6 +100,6 @@ public enum Direction {
 
 	public static Direction random() {
 		int ordinial = ThreadLocalRandom.current().nextInt(4);
-		return Direction.values()[ordinial];
+		return DIRECTIONS[ordinial];
 	}
 }
