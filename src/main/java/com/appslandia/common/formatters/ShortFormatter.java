@@ -23,8 +23,8 @@ package com.appslandia.common.formatters;
 import java.text.NumberFormat;
 
 import com.appslandia.common.base.FormatProvider;
-import com.appslandia.common.utils.NumberUtils;
 import com.appslandia.common.utils.StringUtils;
+import com.appslandia.common.utils.ValueUtils;
 
 /**
  *
@@ -69,7 +69,7 @@ public class ShortFormatter extends NumberFormatter {
 			Number number = this.parseNumber(str, formatProvider);
 			long value = number.longValue();
 
-			if (!NumberUtils.isShortRange(value)) {
+			if (!ValueUtils.isShortRange(value)) {
 				throw toNumberOverflowError(str);
 			}
 			return (short) value;
@@ -79,7 +79,7 @@ public class ShortFormatter extends NumberFormatter {
 		try {
 			long value = Long.parseLong(str);
 
-			if (!NumberUtils.isShortRange(value)) {
+			if (!ValueUtils.isShortRange(value)) {
 				throw toNumberOverflowError(str);
 			}
 			return (short) value;

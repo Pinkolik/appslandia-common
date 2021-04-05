@@ -23,8 +23,8 @@ package com.appslandia.common.formatters;
 import java.text.NumberFormat;
 
 import com.appslandia.common.base.FormatProvider;
-import com.appslandia.common.utils.NumberUtils;
 import com.appslandia.common.utils.StringUtils;
+import com.appslandia.common.utils.ValueUtils;
 
 /**
  *
@@ -69,7 +69,7 @@ public class FloatFormatter extends NumberFormatter {
 			Number number = this.parseNumber(str, formatProvider);
 			double value = number.doubleValue();
 
-			if (!NumberUtils.isFloatRange(value)) {
+			if (!ValueUtils.isFloatRange(value)) {
 				throw toNumberOverflowError(str);
 			}
 			return new Float(value);
@@ -79,7 +79,7 @@ public class FloatFormatter extends NumberFormatter {
 		try {
 			double value = Double.parseDouble(str);
 
-			if (!NumberUtils.isFloatRange(value)) {
+			if (!ValueUtils.isFloatRange(value)) {
 				throw toNumberOverflowError(str);
 			}
 			return new Float(value);

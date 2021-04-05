@@ -31,12 +31,12 @@ import javax.mail.Transport;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.MimeMessage;
 
-import com.appslandia.common.base.Config;
 import com.appslandia.common.base.InitializeObject;
 import com.appslandia.common.crypto.SecureProps;
 import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.CollectionUtils;
 import com.appslandia.common.utils.ExceptionUtils;
+import com.appslandia.common.utils.ParseUtils;
 
 /**
  *
@@ -80,7 +80,7 @@ public class SmtpMailer extends InitializeObject {
 			transport.connect(user, password);
 
 			String debugToEmails = null;
-			if (Config.isTrueValue(this.props.get("mail.smtp.debug.enabled"))) {
+			if (ParseUtils.isTrueValue(this.props.get("mail.smtp.debug.enabled"))) {
 				debugToEmails = AssertUtils.assertNotNull(this.props.get("mail.smtp.debug.to_emails"), "mail.smtp.debug.to_emails is required.");
 			}
 

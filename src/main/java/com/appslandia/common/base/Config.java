@@ -22,7 +22,7 @@ package com.appslandia.common.base;
 
 import java.util.Map;
 
-import com.appslandia.common.utils.NumberUtils;
+import com.appslandia.common.utils.ParseUtils;
 import com.appslandia.common.utils.SYS;
 import com.appslandia.common.utils.SplitUtils;
 import com.appslandia.common.utils.StringFormat;
@@ -157,16 +157,7 @@ public interface Config {
 
 	default public boolean getBool(String key, boolean defaultValue) {
 		String value = getString(key);
-		if (value == null) {
-			return defaultValue;
-		}
-		if (isTrueValue(value)) {
-			return true;
-		}
-		if (isFalseValue(value)) {
-			return false;
-		}
-		return defaultValue;
+		return ParseUtils.parseBool(value, defaultValue);
 	}
 
 	default public boolean getRequiredBool(String key) throws IllegalStateException, BoolFormatException {
@@ -174,10 +165,10 @@ public interface Config {
 		if (value == null) {
 			throw toNoValueException(key);
 		}
-		if (isTrueValue(value)) {
+		if (ParseUtils.isTrueValue(value)) {
 			return true;
 		}
-		if (isFalseValue(value)) {
+		if (ParseUtils.isFalseValue(value)) {
 			return false;
 		}
 		throw new BoolFormatException(value);
@@ -188,7 +179,7 @@ public interface Config {
 		if (value == null) {
 			return defaultValue;
 		}
-		return NumberUtils.parseInt(value, defaultValue);
+		return ParseUtils.parseInt(value, defaultValue);
 	}
 
 	default public int getRequiredInt(String key) throws IllegalStateException, NumberFormatException {
@@ -204,7 +195,7 @@ public interface Config {
 		if (value == null) {
 			return defaultValue;
 		}
-		return NumberUtils.parseLong(value, defaultValue);
+		return ParseUtils.parseLong(value, defaultValue);
 	}
 
 	default public long getRequiredLong(String key) throws IllegalStateException, NumberFormatException {
@@ -220,7 +211,7 @@ public interface Config {
 		if (value == null) {
 			return defaultValue;
 		}
-		return NumberUtils.parseDouble(value, defaultValue);
+		return ParseUtils.parseDouble(value, defaultValue);
 	}
 
 	default public double getRequiredDouble(String key) throws IllegalStateException, NumberFormatException {
@@ -233,14 +224,6 @@ public interface Config {
 			throw toNoValueException(key);
 		}
 		return val;
-	}
-
-	public static boolean isTrueValue(String value) {
-		return "true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value);
-	}
-
-	public static boolean isFalseValue(String value) {
-		return "false".equalsIgnoreCase(value) || "no".equalsIgnoreCase(value);
 	}
 
 	static IllegalStateException toNoValueException(String key) {

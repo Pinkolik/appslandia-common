@@ -27,7 +27,20 @@ import com.appslandia.common.base.Out;
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class NumberUtils {
+public class ParseUtils {
+
+	public static boolean parseBool(String value, boolean defaultValue) {
+		if (value == null) {
+			return defaultValue;
+		}
+		if (isTrueValue(value)) {
+			return true;
+		}
+		if (isFalseValue(value)) {
+			return false;
+		}
+		return defaultValue;
+	}
 
 	public static int parseInt(String value, int defaultValue) {
 		if (value == null) {
@@ -77,6 +90,24 @@ public class NumberUtils {
 		} catch (NumberFormatException ex) {
 			return defaultValue;
 		}
+	}
+
+	public static boolean parseBool(String value, Out<Boolean> valid) {
+		valid.value = Boolean.FALSE;
+		if (value == null) {
+			return false;
+		}
+
+		valid.value = Boolean.TRUE;
+		if (isTrueValue(value)) {
+			return true;
+		}
+		if (isFalseValue(value)) {
+			return false;
+		}
+
+		valid.value = Boolean.FALSE;
+		return false;
 	}
 
 	public static int parseInt(String value, Out<Boolean> valid) {
@@ -141,33 +172,11 @@ public class NumberUtils {
 		}
 	}
 
-	public static boolean isFloatRange(double value) {
-		double posDouble = (value >= 0d) ? value : (value * -1d);
-
-		if (posDouble != 0d && (posDouble < Float.MIN_VALUE || posDouble > Float.MAX_VALUE)) {
-			return false;
-		}
-		return true;
+	public static boolean isTrueValue(String value) {
+		return "true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value);
 	}
 
-	public static boolean isIntRange(long value) {
-		if ((value < Integer.MIN_VALUE) || (value > Integer.MAX_VALUE)) {
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean isShortRange(long value) {
-		if ((value < Short.MIN_VALUE) || (value > Short.MAX_VALUE)) {
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean isByteRange(long value) {
-		if ((value < Byte.MIN_VALUE) || (value > Byte.MAX_VALUE)) {
-			return false;
-		}
-		return true;
+	public static boolean isFalseValue(String value) {
+		return "false".equalsIgnoreCase(value) || "no".equalsIgnoreCase(value);
 	}
 }

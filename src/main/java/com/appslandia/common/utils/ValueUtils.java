@@ -100,4 +100,34 @@ public class ValueUtils {
 	public static double valueOrAlt(double checkValue, double altValue) {
 		return (checkValue != 0.0) ? checkValue : altValue;
 	}
+
+	public static boolean isFloatRange(double value) {
+		double posDouble = (value >= 0d) ? value : (value * -1d);
+
+		if (posDouble != 0d && (posDouble < Float.MIN_VALUE || posDouble > Float.MAX_VALUE)) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isIntRange(long value) {
+		if ((value < Integer.MIN_VALUE) || (value > Integer.MAX_VALUE)) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isShortRange(long value) {
+		if ((value < Short.MIN_VALUE) || (value > Short.MAX_VALUE)) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean isByteRange(long value) {
+		if ((value < Byte.MIN_VALUE) || (value > Byte.MAX_VALUE)) {
+			return false;
+		}
+		return true;
+	}
 }
