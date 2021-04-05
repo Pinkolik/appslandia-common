@@ -32,6 +32,26 @@ import com.appslandia.common.base.Out;
  */
 public class SYS {
 
+	public static boolean getBoolProp(String key, boolean defaultValue) {
+		String value = StringUtils.trimToNull(System.getProperty(key));
+		return ParseUtils.parseBool(value, defaultValue);
+	}
+
+	public static int getIntProp(String key, int defaultValue) {
+		String value = StringUtils.trimToNull(System.getProperty(key));
+		return ParseUtils.parseInt(value, defaultValue);
+	}
+
+	public static long getLongProp(String key, long defaultValue) {
+		String value = StringUtils.trimToNull(System.getProperty(key));
+		return ParseUtils.parseLong(value, defaultValue);
+	}
+
+	public static double getDoubleProp(String key, double defaultValue) {
+		String value = StringUtils.trimToNull(System.getProperty(key));
+		return ParseUtils.parseDouble(value, defaultValue);
+	}
+
 	public static String getProp(String key, String defaultValue) {
 		String value = StringUtils.trimToNull(System.getProperty(key));
 		return (value != null) ? value : defaultValue;
