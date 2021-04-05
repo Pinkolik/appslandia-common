@@ -34,22 +34,22 @@ public class SYS {
 
 	public static boolean getBoolProp(String key, boolean defaultValue) {
 		String value = StringUtils.trimToNull(System.getProperty(key));
-		return ParseUtils.parseBool(value, defaultValue);
+		return (value != null) ? ParseUtils.parseBool(value, defaultValue) : defaultValue;
 	}
 
 	public static int getIntProp(String key, int defaultValue) {
 		String value = StringUtils.trimToNull(System.getProperty(key));
-		return ParseUtils.parseInt(value, defaultValue);
+		return (value != null) ? ParseUtils.parseInt(value, defaultValue) : defaultValue;
 	}
 
 	public static long getLongProp(String key, long defaultValue) {
 		String value = StringUtils.trimToNull(System.getProperty(key));
-		return ParseUtils.parseLong(value, defaultValue);
+		return (value != null) ? ParseUtils.parseLong(value, defaultValue) : defaultValue;
 	}
 
 	public static double getDoubleProp(String key, double defaultValue) {
 		String value = StringUtils.trimToNull(System.getProperty(key));
-		return ParseUtils.parseDouble(value, defaultValue);
+		return (value != null) ? ParseUtils.parseDouble(value, defaultValue) : defaultValue;
 	}
 
 	public static String getProp(String key) {
