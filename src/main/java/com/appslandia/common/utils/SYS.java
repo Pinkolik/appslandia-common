@@ -52,6 +52,10 @@ public class SYS {
 		return ParseUtils.parseDouble(value, defaultValue);
 	}
 
+	public static String getProp(String key) {
+		return getProp(key, null);
+	}
+
 	public static String getProp(String key, String defaultValue) {
 		String value = StringUtils.trimToNull(System.getProperty(key));
 		return (value != null) ? value : defaultValue;
@@ -63,6 +67,10 @@ public class SYS {
 			throw new IllegalStateException("The property '" + key + "' doesn't have a value.");
 		}
 		return value;
+	}
+
+	public static String getEnv(String key) {
+		return getEnv(key, null);
 	}
 
 	public static String getEnv(String key, String defaultValue) {
