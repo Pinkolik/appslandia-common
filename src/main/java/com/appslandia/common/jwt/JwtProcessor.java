@@ -29,7 +29,6 @@ import com.appslandia.common.base.InitializeObject;
 import com.appslandia.common.crypto.CryptoException;
 import com.appslandia.common.json.JsonException;
 import com.appslandia.common.json.JsonProcessor;
-import com.appslandia.common.utils.ArrayUtils;
 import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.ValueUtils;
 
@@ -39,8 +38,6 @@ import com.appslandia.common.utils.ValueUtils;
  *
  */
 public class JwtProcessor extends InitializeObject {
-
-	private static final byte[] JWT_SEP_BYTES = ".".getBytes(StandardCharsets.UTF_8);
 
 	protected JsonProcessor jsonProcessor;
 	protected JwtSigner jwtSigner;
@@ -80,26 +77,22 @@ public class JwtProcessor extends InitializeObject {
 		AssertUtils.assertNotNull(jwt.getPayload());
 
 		// Header
-		byte[] headerBytes = this.jsonProcessor.toByteArray(jwt.getHeader());
-		String base64Header = BaseEncoder.BASE64_URL_NP.encode(headerBytes);
+		String base64Header = BaseEncoder.BASE64_URL.encode(this.jsonProcessor.toByteArray(jwt.getHeader()));
 
 		// PAYLOAD
-		byte[] payloadBytes = this.jsonProcessor.toByteArray(jwt.getPayload());
-		String base64Payload = BaseEncoder.BASE64_URL_NP.encode(payloadBytes);
+		String base64Payload = BaseEncoder.BASE64_URL.encode(this.jsonProcessor.toByteArray(jwt.getPayload()));
 
 		// No ALG
 		if (this.jwtSigner == JwtSigner.NONE) {
-			return new StringBuilder(base64Header.length() + 1 + base64Payload.length() + 1).append(base64Header).append(".").append(base64Payload).append(".")
-					.toString();
+			return newBuilder(base64Header, base64Payload, 1).append(".").toString();
 		}
 
 		// Signature
-		byte[] dataToSign = ArrayUtils.append(headerBytes, JWT_SEP_BYTES, payloadBytes);
-		String base64Sig = BaseEncoder.BASE64_URL_NP.encode(this.jwtSigner.sign(dataToSign));
+		String dataToSign = newBuilder(base64Header, base64Payload, 0).toString();
+		String base64Sig = BaseEncoder.BASE64_URL.encode(this.jwtSigner.sign(dataToSign.getBytes(StandardCharsets.UTF_8)));
 
 		// JWT
-		return new StringBuilder(base64Header.length() + 1 + base64Payload.length() + 1 + base64Sig.length()).append(base64Header).append(".")
-				.append(base64Payload).append(".").append(base64Sig).toString();
+		return newBuilder(base64Header, base64Payload, 1 + base64Sig.length()).append(".").append(base64Sig).toString();
 	}
 
 	public JwtToken parseJwt(String jwt) throws IllegalArgumentException, CryptoException, JsonException, JwtException {
@@ -110,9 +103,6 @@ public class JwtProcessor extends InitializeObject {
 		if (parts == null) {
 			throw new JwtException("JWT token is invalid format.");
 		}
-
-		byte[] headerBytes = BaseEncoder.BASE64_URL_NP.decode(parts[0]);
-		byte[] payloadBytes = BaseEncoder.BASE64_URL_NP.decode(parts[1]);
 
 		// No ALG
 		if (parts[2] == null) {
@@ -125,20 +115,19 @@ public class JwtProcessor extends InitializeObject {
 			}
 
 			// ALG
-			byte[] dataToSign = ArrayUtils.append(headerBytes, JWT_SEP_BYTES, payloadBytes);
-			byte[] sigBytes = BaseEncoder.BASE64_URL_NP.decode(parts[2]);
+			String dataToSign = newBuilder(parts[0], parts[1], 0).toString();
 
-			if (!this.jwtSigner.verify(dataToSign, sigBytes)) {
+			if (!this.jwtSigner.verify(dataToSign.getBytes(StandardCharsets.UTF_8), BaseEncoder.BASE64_URL.decode(parts[2]))) {
 				throw new JwtException("JWT signature is invalid.");
 			}
 		}
 
 		// Header
-		String headerJson = new String(headerBytes, StandardCharsets.UTF_8);
+		String headerJson = new String(BaseEncoder.BASE64_URL.decode(parts[0]), StandardCharsets.UTF_8);
 		JwtHeader header = this.jsonProcessor.read(new StringReader(headerJson), JwtHeader.class);
 
 		// PAYLOAD
-		String payloadJson = new String(payloadBytes, StandardCharsets.UTF_8);
+		String payloadJson = new String(BaseEncoder.BASE64_URL.decode(parts[1]), StandardCharsets.UTF_8);
 		JwtPayload payload = this.jsonProcessor.read(new StringReader(payloadJson), JwtPayload.class);
 
 		return new JwtToken(header, payload);
@@ -170,5 +159,9 @@ public class JwtProcessor extends InitializeObject {
 		assertNotInitialized();
 		this.issuer = issuer;
 		return this;
+	}
+
+	static StringBuilder newBuilder(String base64Header, String base64Payload, int signtureLen) {
+		return new StringBuilder(base64Header.length() + 1 + base64Payload.length() + signtureLen).append(base64Header).append(".").append(base64Payload);
 	}
 }
