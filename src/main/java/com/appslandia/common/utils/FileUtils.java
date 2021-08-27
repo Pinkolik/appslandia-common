@@ -30,6 +30,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Arrays;
 
 /**
  *
@@ -37,6 +38,14 @@ import java.nio.file.attribute.BasicFileAttributes;
  *
  */
 public class FileUtils {
+
+	public static void writeContent(Path path, String content) throws IOException {
+		writeContent(path, content, StandardCharsets.UTF_8);
+	}
+
+	public static void writeContent(Path path, String content, Charset charset) throws IOException {
+		Files.write(path, Arrays.asList(content), charset);
+	}
 
 	public static String readContent(File src) throws IOException {
 		return readContent(src, StandardCharsets.UTF_8);
