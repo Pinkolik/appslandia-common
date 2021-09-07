@@ -269,6 +269,13 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
+	public int executeUpdate(String sql) throws SQLException {
+		this.assertNotClosed();
+		try (Statement stat = this.conn.createStatement()) {
+			return stat.executeUpdate(sql);
+		}
+	}
+
 	public void executeBatch() throws SQLException {
 		this.assertNotClosed();
 		AssertUtils.assertTrue(!this.conn.getAutoCommit());
