@@ -221,7 +221,9 @@ public class DbManager implements AutoCloseable {
 				setParameter(cache.getStat, field.getName(), val, field.getSqlType());
 			}
 		}
-		return RecordUtils.executeSingle(cache.getStat);
+		try (ResultSet rs = cache.getStat.executeQuery()) {
+			return RecordUtils.executeSingle(rs);
+		}
 	}
 
 	public boolean exists(Record key, Table table) throws SQLException {

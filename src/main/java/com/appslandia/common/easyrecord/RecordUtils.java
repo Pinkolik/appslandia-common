@@ -20,16 +20,13 @@
 
 package com.appslandia.common.easyrecord;
 
-import java.sql.ResultSetMetaData;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.appslandia.common.jdbc.JdbcUtils;
 import com.appslandia.common.jdbc.NonUniqueSqlException;
-import com.appslandia.common.jdbc.ResultSetImpl;
-import com.appslandia.common.jdbc.ResultSetMapper;
-import com.appslandia.common.jdbc.StatementImpl;
 
 /**
  *
@@ -38,68 +35,37 @@ import com.appslandia.common.jdbc.StatementImpl;
  */
 public final class RecordUtils {
 
-	private static ResultSetMapper<Record> newRecordMapper() {
-		return new ResultSetMapper<Record>() {
-
-			@Override
-			public Record map(ResultSetImpl rs) throws SQLException {
-				Record record = new Record();
-				ResultSetMetaData rsmd = rs.getMetaData();
-
-				for (int col = 1; col <= rsmd.getColumnCount(); col++) {
-					String fieldLabel = rsmd.getColumnLabel(col);
-					record.set(fieldLabel, rs.getObject(col));
-				}
-
-				return record;
-			}
-		};
-	}
-
-	public static Record executeSingle(StatementImpl stat) throws SQLException {
-		return stat.executeSingle(newRecordMapper());
-	}
-
-	public static Record executeSingle(ResultSetImpl rs) throws SQLException {
-		ResultSetMapper<Record> mapper = newRecordMapper();
+	public static Record executeSingle(ResultSet rs) throws SQLException {
+		final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 
 		Record t = null;
 		boolean rsRead = false;
+
 		while (rs.next()) {
 			if (rsRead) {
 				throw new NonUniqueSqlException();
 			}
 			rsRead = true;
-			t = mapper.map(rs);
+			t = toRecord(rs, columnLabels);
 		}
 		return t;
 	}
 
-	public static List<Record> executeList(StatementImpl stat) throws SQLException {
-		try (ResultSetImpl rs = stat.executeResult()) {
-			return executeList(rs);
-		}
-	}
-
-	public static List<Record> executeList(ResultSetImpl rs) throws SQLException {
+	public static List<Record> executeList(ResultSet rs) throws SQLException {
 		List<Record> list = new ArrayList<>();
 		final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 
-		ResultSetMapper<Record> mapper = new ResultSetMapper<Record>() {
-
-			@Override
-			public Record map(ResultSetImpl rs) throws SQLException {
-				Record record = new Record();
-				for (int col = 1; col <= columnLabels.length; col++) {
-					record.set(columnLabels[col - 1], rs.getObject(col));
-				}
-				return record;
-			}
-		};
-
 		while (rs.next()) {
-			list.add(mapper.map(rs));
+			list.add(toRecord(rs, columnLabels));
 		}
 		return list;
+	}
+
+	private static Record toRecord(ResultSet rs, String[] columnLabels) throws SQLException {
+		Record record = new Record();
+		for (int col = 1; col <= columnLabels.length; col++) {
+			record.set(columnLabels[col - 1], rs.getObject(col));
+		}
+		return record;
 	}
 }
