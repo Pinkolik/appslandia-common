@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.appslandia.common.jdbc.JdbcUtils;
+import com.appslandia.common.jdbc.NonUniqueSqlException;
 import com.appslandia.common.jdbc.ResultSetImpl;
 import com.appslandia.common.jdbc.ResultSetMapper;
 import com.appslandia.common.jdbc.StatementImpl;
@@ -37,9 +38,8 @@ import com.appslandia.common.jdbc.StatementImpl;
  */
 public final class RecordUtils {
 
-	public static Record executeSingle(StatementImpl stat) throws SQLException {
-
-		ResultSetMapper<Record> mapper = new ResultSetMapper<Record>() {
+	private static ResultSetMapper<Record> newRecordMapper() {
+		return new ResultSetMapper<Record>() {
 
 			@Override
 			public Record map(ResultSetImpl rs) throws SQLException {
@@ -54,7 +54,25 @@ public final class RecordUtils {
 				return record;
 			}
 		};
-		return stat.executeSingle(mapper);
+	}
+
+	public static Record executeSingle(StatementImpl stat) throws SQLException {
+		return stat.executeSingle(newRecordMapper());
+	}
+
+	public static Record executeSingle(ResultSetImpl rs) throws SQLException {
+		ResultSetMapper<Record> mapper = newRecordMapper();
+
+		Record t = null;
+		boolean rsRead = false;
+		while (rs.next()) {
+			if (rsRead) {
+				throw new NonUniqueSqlException();
+			}
+			rsRead = true;
+			t = mapper.map(rs);
+		}
+		return t;
 	}
 
 	public static List<Record> executeList(StatementImpl stat) throws SQLException {
