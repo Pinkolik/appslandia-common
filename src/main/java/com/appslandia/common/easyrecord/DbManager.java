@@ -34,7 +34,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.appslandia.common.jdbc.ResultSetImpl;
 import com.appslandia.common.jdbc.StatementImpl;
 import com.appslandia.common.utils.AssertUtils;
 
@@ -246,7 +245,7 @@ public class DbManager implements AutoCloseable {
 	public List<Record> getAll(Table table) throws SQLException {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(table.getGetAllSql()))) {
+			try (ResultSet rs = stat.executeQuery(table.getGetAllSql())) {
 				return RecordUtils.executeList(rs);
 			}
 		}
@@ -255,7 +254,7 @@ public class DbManager implements AutoCloseable {
 	public Record executeSingle(String sql) throws SQLException {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+			try (ResultSet rs = stat.executeQuery(sql)) {
 				return RecordUtils.executeSingle(rs);
 			}
 		}
@@ -264,7 +263,7 @@ public class DbManager implements AutoCloseable {
 	public List<Record> executeList(String sql) throws SQLException {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+			try (ResultSet rs = stat.executeQuery(sql)) {
 				return RecordUtils.executeList(rs);
 			}
 		}
