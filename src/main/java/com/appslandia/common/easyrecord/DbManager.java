@@ -250,6 +250,24 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
+	public Record executeSingle(String sql) throws SQLException {
+		this.assertNotClosed();
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+				return RecordUtils.executeSingle(rs);
+			}
+		}
+	}
+
+	public List<Record> executeList(String sql) throws SQLException {
+		this.assertNotClosed();
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+				return RecordUtils.executeList(rs);
+			}
+		}
+	}
+
 	public void executeBatch() throws SQLException {
 		this.assertNotClosed();
 		AssertUtils.assertTrue(!this.conn.getAutoCommit());
