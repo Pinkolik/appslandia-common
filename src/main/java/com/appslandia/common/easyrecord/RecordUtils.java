@@ -20,6 +20,7 @@
 
 package com.appslandia.common.easyrecord;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,6 +36,12 @@ import com.appslandia.common.jdbc.NonUniqueSqlException;
  */
 public final class RecordUtils {
 
+	public static Record executeSingle(PreparedStatement stat) throws SQLException {
+		try (ResultSet rs = stat.executeQuery()) {
+			return executeSingle(stat);
+		}
+	}
+
 	public static Record executeSingle(ResultSet rs) throws SQLException {
 		final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 
@@ -49,6 +56,12 @@ public final class RecordUtils {
 			t = toRecord(rs, columnLabels);
 		}
 		return t;
+	}
+
+	public static List<Record> executeList(PreparedStatement stat) throws SQLException {
+		try (ResultSet rs = stat.executeQuery()) {
+			return executeList(stat);
+		}
 	}
 
 	public static List<Record> executeList(ResultSet rs) throws SQLException {
