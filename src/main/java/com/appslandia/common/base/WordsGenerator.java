@@ -26,7 +26,6 @@ import java.util.regex.Pattern;
 
 import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.CharUtils;
-import com.appslandia.common.utils.RandomUtils;
 import com.appslandia.common.utils.ValueUtils;
 
 /**
@@ -76,24 +75,7 @@ public class WordsGenerator extends InitializeObject implements TextGenerator {
 	}
 
 	private String generate(char[][] sources) {
-		int len = Math.max(this.length, sources.length);
-		char[] rdChars = new char[len];
-		int avgLen = len / sources.length;
-
-		int emptyCount = len;
-		int[] sourceIndexes = RandomUtils.nextIndexes(sources.length, this.random);
-		for (int index : sourceIndexes) {
-
-			int rdCount = RandomUtils.nextInt(1, avgLen, this.random);
-			emptyCount = randomChars(this.random, sources[index], rdChars, rdCount, emptyCount);
-		}
-
-		for (int i = 0; i < len; i++) {
-			if (rdChars[i] == 0) {
-				char[] nextSource = sources[this.random.nextInt(sources.length)];
-				rdChars[i] = nextSource[this.random.nextInt(nextSource.length)];
-			}
-		}
+		char[] rdChars = CharUtils.randomChars(this.length, sources, this.random);
 		return new String(rdChars, 0, this.length);
 	}
 
@@ -125,29 +107,5 @@ public class WordsGenerator extends InitializeObject implements TextGenerator {
 		assertNotInitialized();
 		this.alphabet = alphabet;
 		return this;
-	}
-
-	public static int randomChars(Random random, char[] src, char[] dest, int rdCount, int emptyCount) {
-		for (int i = 0; i < rdCount; i++) {
-			int index = randomEmptyIndex(random, dest, emptyCount);
-			dest[index] = src[random.nextInt(src.length)];
-			emptyCount--;
-		}
-		return emptyCount;
-	}
-
-	private static int randomEmptyIndex(Random random, char[] dest, int emptyCount) {
-		int rdIndex = random.nextInt(emptyCount);
-		int idx = -1;
-		for (int i = 0; i < dest.length; i++) {
-			if (dest[i] != 0) {
-				continue;
-			}
-			idx++;
-			if (idx == rdIndex) {
-				return i;
-			}
-		}
-		return 0;
 	}
 }

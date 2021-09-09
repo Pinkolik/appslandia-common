@@ -24,7 +24,6 @@ import java.security.SecureRandom;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-import com.appslandia.common.base.WordsGenerator;
 import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.CharUtils;
 import com.appslandia.common.utils.RandomUtils;
@@ -48,6 +47,8 @@ public class PasswordUtil {
 	private static final char[] ALPHABET_LOWER = CharUtils.toCharRanges("a-z");
 	private static final char[] ALPHABET_DIGITS = CharUtils.toCharRanges("0-9");
 
+	private static final char[][] ALPHABET = new char[][] { ALPHABET_SYMBOLS, ALPHABET_UPPER, ALPHABET_LOWER, ALPHABET_DIGITS };
+
 	final Random random = new SecureRandom();
 
 	public char[] generatePassword(int minLength, int maxLength) {
@@ -55,47 +56,7 @@ public class PasswordUtil {
 		AssertUtils.assertTrue(minLength >= 8, "minLength >= 8");
 
 		int length = RandomUtils.nextInt(minLength, maxLength, this.random);
-		char[] pwdChars = new char[length];
-		int emptyCount = length;
-
-		int[] sourceIndexes = RandomUtils.nextIndexes(4, this.random);
-		for (int index : sourceIndexes) {
-			switch (index) {
-			case 0:
-				emptyCount = WordsGenerator.randomChars(this.random, ALPHABET_UPPER, pwdChars, 1, emptyCount);
-				break;
-			case 1:
-				emptyCount = WordsGenerator.randomChars(this.random, ALPHABET_LOWER, pwdChars, 1, emptyCount);
-				break;
-			case 2:
-				emptyCount = WordsGenerator.randomChars(this.random, ALPHABET_DIGITS, pwdChars, 1, emptyCount);
-				break;
-			default:
-				emptyCount = WordsGenerator.randomChars(this.random, ALPHABET_SYMBOLS, pwdChars, 1, emptyCount);
-				break;
-			}
-		}
-
-		for (int i = 0; i < length; i++) {
-			if (pwdChars[i] == 0) {
-				int src = this.random.nextInt(4);
-				switch (src) {
-				case 0:
-					pwdChars[i] = ALPHABET_UPPER[this.random.nextInt(ALPHABET_UPPER.length)];
-					break;
-				case 1:
-					pwdChars[i] = ALPHABET_LOWER[this.random.nextInt(ALPHABET_LOWER.length)];
-					break;
-				case 2:
-					pwdChars[i] = ALPHABET_DIGITS[this.random.nextInt(ALPHABET_DIGITS.length)];
-					break;
-				default:
-					pwdChars[i] = ALPHABET_SYMBOLS[this.random.nextInt(ALPHABET_SYMBOLS.length)];
-					break;
-				}
-			}
-		}
-		return pwdChars;
+		return CharUtils.randomChars(length, ALPHABET, this.random);
 	}
 
 	public static boolean isValid(String password) {
