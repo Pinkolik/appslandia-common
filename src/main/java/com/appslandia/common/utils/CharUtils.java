@@ -20,6 +20,7 @@
 
 package com.appslandia.common.utils;
 
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -66,5 +67,37 @@ public class CharUtils {
 			chars = (chars == null) ? notRange : ArrayUtils.append(chars, notRange);
 		}
 		return chars;
+	}
+
+	public static char[] randomChars(int len, char[][] sources, Random random) {
+		char[] rdChars = new char[len];
+		int avgLen = ValueUtils.valueOrMin(len / sources.length, 1);
+
+		int size = 0;
+		int[] rdSrcIndexes = RandomUtils.nextIndexes(sources.length, random);
+
+		for (int srcIndex : rdSrcIndexes) {
+			if (size >= len)
+				break;
+
+			int rdCount = RandomUtils.nextInt(1, avgLen, random);
+
+			for (int i = 0; i < rdCount; i++) {
+				rdChars[size + i] = sources[srcIndex][random.nextInt(sources[srcIndex].length)];
+			}
+			size += rdCount;
+		}
+
+		if (size < len) {
+			for (int i = 0; i < len; i++) {
+				if (rdChars[i] == 0) {
+					int srcIndex = random.nextInt(sources.length);
+					rdChars[i] = sources[srcIndex][random.nextInt(sources[srcIndex].length)];
+				}
+			}
+		}
+
+		ArrayUtils.shuffle(rdChars, random);
+		return rdChars;
 	}
 }
