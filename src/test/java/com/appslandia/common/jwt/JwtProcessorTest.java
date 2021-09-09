@@ -26,7 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import com.appslandia.common.crypto.MacDigester;
-import com.appslandia.common.json.GsonMapDeserializer;
 import com.appslandia.common.json.GsonProcessor;
 import com.google.gson.GsonBuilder;
 
@@ -39,8 +38,7 @@ public class JwtProcessorTest {
 
 	@Test
 	public void test() {
-		GsonBuilder gsonBuilder = GsonProcessor.newBuilder().registerTypeAdapter(JwtHeader.class, new GsonMapDeserializer<>((m) -> new JwtHeader(m)))
-				.registerTypeAdapter(JwtPayload.class, new GsonMapDeserializer<>((m) -> new JwtPayload(m)));
+		GsonBuilder gsonBuilder = JwtGson.newGsonBuilder();
 		GsonProcessor gsonProcessor = new GsonProcessor().setBuilder(gsonBuilder);
 
 		JwtProcessor jwtProcessor = new JwtProcessor().setJsonProcessor(gsonProcessor);
@@ -71,8 +69,7 @@ public class JwtProcessorTest {
 
 	@Test
 	public void test_none() {
-		GsonBuilder gsonBuilder = GsonProcessor.newBuilder().registerTypeAdapter(JwtHeader.class, new GsonMapDeserializer<>((m) -> new JwtHeader(m)))
-				.registerTypeAdapter(JwtPayload.class, new GsonMapDeserializer<>((m) -> new JwtPayload(m)));
+		GsonBuilder gsonBuilder = JwtGson.newGsonBuilder();
 		GsonProcessor gsonProcessor = new GsonProcessor().setBuilder(gsonBuilder);
 
 		JwtProcessor jwtProcessor = new JwtProcessor().setJsonProcessor(gsonProcessor);
