@@ -20,7 +20,6 @@
 
 package com.appslandia.common.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -72,14 +71,6 @@ public class FileUtils {
 				return FileVisitResult.CONTINUE;
 			}
 		});
-	}
-
-	public static void copy(File src, File dest) throws IOException {
-		Files.copy(src.toPath(), dest.toPath());
-	}
-
-	public static void copyRecursively(File src, File dest) throws IOException {
-		copyRecursively(src.toPath(), dest.toPath());
 	}
 
 	public static void copyRecursively(Path src, Path dest) throws IOException {
