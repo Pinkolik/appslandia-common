@@ -90,10 +90,11 @@ public class CharUtils {
 
 		if (size < len) {
 			for (int i = 0; i < len; i++) {
-				if (rdChars[i] == 0) {
-					int srcIndex = random.nextInt(sources.length);
-					rdChars[i] = sources[srcIndex][random.nextInt(sources[srcIndex].length)];
-				}
+				if (rdChars[i] != 0)
+					continue;
+
+				int srcIndex = random.nextInt(sources.length);
+				rdChars[i] = sources[srcIndex][random.nextInt(sources[srcIndex].length)];
 			}
 		}
 
