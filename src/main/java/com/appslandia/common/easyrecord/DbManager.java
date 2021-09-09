@@ -28,6 +28,7 @@ import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import javax.sql.DataSource;
 
 import com.appslandia.common.jdbc.StatementImpl;
 import com.appslandia.common.utils.AssertUtils;
+import com.appslandia.common.utils.ObjectUtils;
 
 /**
  *
@@ -273,6 +275,22 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
 			return stat.executeUpdate(sql);
+		}
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn) throws SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSet rs = stat.executeQuery(sql)) {
+
+				Map<K, V> map = new HashMap<>();
+				while (rs.next()) {
+
+					K k = ObjectUtils.cast(rs.getObject(keyColumn));
+					V v = ObjectUtils.cast(rs.getObject(valueColumn));
+					map.put(k, v);
+				}
+				return map;
+			}
 		}
 	}
 
