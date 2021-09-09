@@ -279,6 +279,7 @@ public class DbManager implements AutoCloseable {
 	}
 
 	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn) throws SQLException {
+		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSet rs = stat.executeQuery(sql)) {
 
