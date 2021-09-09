@@ -32,6 +32,11 @@ dependencies {
 ```
 
 ## Sample Usage
+### ToString Builder
+```java
+	// Print all fields
+	System.out.println( new ToStringBuilder().toString(any_object));
+```
 ### JDBC Named Parameters
 ```java
 Sql sql = new Sql("SELECT * FROM User WHERE status=:status");
