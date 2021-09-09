@@ -82,7 +82,7 @@ public class DirectionTest {
 		Assert.assertEquals(Direction.SOUTH.turn(1), Direction.WEST);
 		Assert.assertEquals(Direction.WEST.turn(1), Direction.NORTH);
 		Assert.assertEquals(Direction.NORTH.turn(1), Direction.EAST);
-		
+
 		Assert.assertEquals(Direction.EAST.turn(4), Direction.EAST);
 		Assert.assertEquals(Direction.SOUTH.turn(4), Direction.SOUTH);
 		Assert.assertEquals(Direction.WEST.turn(4), Direction.WEST);
@@ -99,12 +99,12 @@ public class DirectionTest {
 
 	@Test
 	public void test_left_n() {
-		
+
 		Assert.assertEquals(Direction.EAST.turn(-1), Direction.NORTH);
 		Assert.assertEquals(Direction.NORTH.turn(-1), Direction.WEST);
 		Assert.assertEquals(Direction.WEST.turn(-1), Direction.SOUTH);
 		Assert.assertEquals(Direction.SOUTH.turn(-1), Direction.EAST);
-		
+
 		Assert.assertEquals(Direction.EAST.turn(-4), Direction.EAST);
 		Assert.assertEquals(Direction.SOUTH.turn(-4), Direction.SOUTH);
 		Assert.assertEquals(Direction.WEST.turn(-4), Direction.WEST);
