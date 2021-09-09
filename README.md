@@ -70,12 +70,8 @@ try (StatementImpl stat = new StatementImpl(connection, cmd)) {
   // JwtProcessor
   JwtProcessor processor = new JwtProcessor().setIssuer("Issuer1");
 
-  GsonBuilder gsonBuilder = GsonProcessor.newBuilder()
-				.registerTypeAdapter(JwtHeader.class, new GsonMapDeserializer<>((m) -> new JwtHeader(m)))
-				.registerTypeAdapter(JwtPayload.class, new GsonMapDeserializer<>((m) -> new JwtPayload(m)));
-
   // GsonProcessor or your JsonProcessor
-  processor.setJsonProcessor(new GsonProcessor().setBuilder(gsonBuilder));
+  processor.setJsonProcessor(new GsonProcessor().setBuilder(JwtGson.newGsonBuilder()));
   
   processor.setJwtSigner(new JwtSigner().setAlg("HS256")
   				.setSigner(new MacDigester().setAlgorithm("HmacSHA256").setSecret("secret")));
