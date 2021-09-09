@@ -47,16 +47,12 @@ public class FileUtils {
 		Files.write(path, Arrays.asList(content), charset);
 	}
 
-	public static String readContent(File src) throws IOException {
+	public static String readContent(Path src) throws IOException {
 		return readContent(src, StandardCharsets.UTF_8);
 	}
 
-	public static String readContent(File src, Charset charset) throws IOException {
-		return new String(Files.readAllBytes(src.toPath()), charset);
-	}
-
-	public static void deleteRecursively(File root) throws IOException {
-		deleteRecursively(root.toPath());
+	public static String readContent(Path path, Charset charset) throws IOException {
+		return new String(Files.readAllBytes(path), charset);
 	}
 
 	public static void deleteRecursively(Path root) throws IOException {
