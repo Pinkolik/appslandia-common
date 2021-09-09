@@ -34,8 +34,8 @@ dependencies {
 ## Sample Usage
 ### ToString Builder
 ```java
-	// Print all fields
-	System.out.println( new ToStringBuilder().toString(any_object));
+// Print all fields
+System.out.println( new ToStringBuilder().toString(any_object));
 ```
 ### JDBC Named Parameters
 ```java
