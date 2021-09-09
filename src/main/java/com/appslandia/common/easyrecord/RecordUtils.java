@@ -65,9 +65,9 @@ public final class RecordUtils {
 	}
 
 	public static List<Record> executeList(ResultSet rs) throws SQLException {
-		List<Record> list = new ArrayList<>();
 		final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 
+		List<Record> list = new ArrayList<>();
 		while (rs.next()) {
 			list.add(toRecord(rs, columnLabels));
 		}
