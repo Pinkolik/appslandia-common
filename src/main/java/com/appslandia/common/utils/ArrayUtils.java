@@ -133,8 +133,20 @@ public class ArrayUtils {
 		}
 	}
 
+	public static void shuffle(char[] src, Random random) {
+		for (int i = src.length; i > 1; i--) {
+			swap(src, i - 1, random.nextInt(i));
+		}
+	}
+
 	public static void swap(int[] src, int i, int j) {
 		int temp = src[i];
+		src[i] = src[j];
+		src[j] = temp;
+	}
+
+	public static void swap(char[] src, int i, int j) {
+		char temp = src[i];
 		src[i] = src[j];
 		src[j] = temp;
 	}
