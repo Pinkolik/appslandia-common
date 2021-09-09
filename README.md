@@ -32,22 +32,31 @@ dependencies {
 ```
 
 ## Sample Usage
-### JDBC Array
+### JDBC Named Parameters
 ```java
-Sql cmd = new Sql("SELECT * FROM User WHERE status=:status AND userType IN :types");
+Sql sql = new Sql("SELECT * FROM User WHERE status=:status");
 
-try (StatementImpl stat = new StatementImpl(connection, cmd)) {
+try (StatementImpl stat = new StatementImpl(connection, sql)) {
   stat.setInt("status", 1); // Named parameter
-  stat.setIntArray("types", new int[] {1,2,3}); // Named array parameter
+  //
+  stat.executeQuery();
+}
+```
+### JDBC Named Array Parameters
+```java
+Sql sql = new Sql("SELECT * FROM User WHERE userType IN :types");
+
+try (StatementImpl stat = new StatementImpl(connection, sql)) {
+  stat.setIntArray("types", new int[] {1,2,3});
   //
   stat.executeQuery();
 }
 ```
 ### JDBC LIKE_ANY
 ```java
-Sql cmd = new Sql("SELECT * FROM User WHERE name LIKE_ANY :names");
+Sql sql = new Sql("SELECT * FROM User WHERE name LIKE_ANY :names");
 
-try (StatementImpl stat = new StatementImpl(connection, cmd)) {
+try (StatementImpl stat = new StatementImpl(connection, sql)) {
   stat.setLikeAny("names", new String[] {"a, "b"}); // name LIKE '%a%' OR name LIKE '%b%'
   //
   stat.executeQuery();
