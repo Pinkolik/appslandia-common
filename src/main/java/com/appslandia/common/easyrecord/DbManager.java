@@ -125,6 +125,7 @@ public class DbManager implements AutoCloseable {
 
 		for (Field field : table.getFields()) {
 			if (!field.isAutoKey()) {
+
 				Object val = record.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(cache.insertStat, field.getName(), val, field.getSqlType());
@@ -136,6 +137,7 @@ public class DbManager implements AutoCloseable {
 			rowAffected = cache.insertStat.executeUpdate();
 			if (table.getAutoKey() != null) {
 				try (ResultSet rs = cache.insertStat.getGeneratedKeys()) {
+
 					if (rs.next()) {
 						Object generatedKey = rs.getObject(1);
 						record.set(table.getAutoKey().getName(), ((Number) generatedKey).longValue());
@@ -165,6 +167,7 @@ public class DbManager implements AutoCloseable {
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey() || field.isUpdatable()) {
+
 				Object val = record.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(cache.updateStat, field.getName(), val, field.getSqlType());
@@ -195,6 +198,7 @@ public class DbManager implements AutoCloseable {
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
+
 				Object val = key.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(cache.deleteStat, field.getName(), val, field.getSqlType());
@@ -217,6 +221,7 @@ public class DbManager implements AutoCloseable {
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
+
 				Object val = key.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(cache.getStat, field.getName(), val, field.getSqlType());
@@ -235,6 +240,7 @@ public class DbManager implements AutoCloseable {
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
+
 				Object val = key.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(cache.existsStat, field.getName(), val, field.getSqlType());
@@ -247,6 +253,7 @@ public class DbManager implements AutoCloseable {
 	public List<Record> getAll(Table table) throws SQLException {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
+
 			try (ResultSet rs = stat.executeQuery(table.getGetAllSql())) {
 				return RecordUtils.executeList(rs);
 			}
@@ -256,6 +263,7 @@ public class DbManager implements AutoCloseable {
 	public Record executeSingle(String sql) throws SQLException {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
+
 			try (ResultSet rs = stat.executeQuery(sql)) {
 				return RecordUtils.executeSingle(rs);
 			}
@@ -265,6 +273,7 @@ public class DbManager implements AutoCloseable {
 	public List<Record> executeList(String sql) throws SQLException {
 		this.assertNotClosed();
 		try (Statement stat = this.conn.createStatement()) {
+
 			try (ResultSet rs = stat.executeQuery(sql)) {
 				return RecordUtils.executeList(rs);
 			}
