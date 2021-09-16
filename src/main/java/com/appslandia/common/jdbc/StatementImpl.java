@@ -81,11 +81,7 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	protected Sql getSql() {
-		return AssertUtils.assertNotNull(this.sql);
-	}
-
-	public ResultSetImpl executeResult() throws java.sql.SQLException {
-		return new ResultSetImpl(this.stat.executeQuery());
+		return AssertUtils.assertNotNull(this.sql, "sql is required.");
 	}
 
 	public int executeGeneratedKey() throws java.sql.SQLException {
@@ -109,7 +105,7 @@ public class StatementImpl implements PreparedStatement {
 	// Execute Results
 
 	public <K, V> Map<K, V> executeMap(ResultSetMapper<K> key, ResultSetMapper<V> value, Map<K, V> newMap) throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			while (rs.next()) {
 				K k = key.map(rs);
 				V v = value.map(rs);
@@ -120,7 +116,7 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public <K, V> Map<K, V> executeMap(String keyColumn, String valueColumn, Map<K, V> newMap) throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSet rs = this.stat.executeQuery()) {
 			while (rs.next()) {
 				K k = ObjectUtils.cast(rs.getObject(keyColumn));
 				V v = ObjectUtils.cast(rs.getObject(valueColumn));
@@ -131,7 +127,7 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public <T> List<T> executeList(ResultSetMapper<T> mapper) throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			List<T> list = new ArrayList<>();
 			while (rs.next()) {
 				T t = mapper.map(rs);
@@ -142,9 +138,10 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public <T> T executeSingle(ResultSetMapper<T> mapper) throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			T t = null;
 			boolean rsRead = false;
+
 			while (rs.next()) {
 				if (rsRead) {
 					throw new NonUniqueSqlException();
@@ -157,9 +154,10 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public <T> T executeScalar() throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSet rs = this.stat.executeQuery()) {
 			Object obj = null;
 			boolean rsRead = false;
+
 			while (rs.next()) {
 				if (rsRead) {
 					throw new NonUniqueSqlException();
@@ -181,8 +179,9 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public long executeCountLong() throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSet rs = this.stat.executeQuery()) {
 			long count = -1;
+
 			while (rs.next()) {
 				if (count >= 0) {
 					throw new NonUniqueSqlException();
@@ -194,7 +193,7 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			while (rs.next()) {
 				handler.handle(rs);
 			}
@@ -202,7 +201,7 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public void executeStream(String streamLabel, OutputStream os, ResultSetHandler handler) throws java.sql.SQLException, IOException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			boolean rsRead = false;
 			while (rs.next()) {
 				if (rsRead) {
@@ -220,8 +219,9 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public void executeStream(String streamLabel, Writer w, ResultSetHandler handler) throws java.sql.SQLException, IOException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			boolean rsRead = false;
+
 			while (rs.next()) {
 				if (rsRead) {
 					throw new NonUniqueSqlException();
@@ -238,8 +238,9 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public void executeNStream(String streamLabel, Writer w, ResultSetHandler handler) throws java.sql.SQLException, IOException {
-		try (ResultSetImpl rs = this.executeResult()) {
+		try (ResultSetImpl rs = this.executeQuery()) {
 			boolean rsRead = false;
+
 			while (rs.next()) {
 				if (rsRead) {
 					throw new NonUniqueSqlException();
@@ -1042,8 +1043,8 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	@Override
-	public java.sql.ResultSet executeQuery() throws java.sql.SQLException {
-		return this.stat.executeQuery();
+	public ResultSetImpl executeQuery() throws java.sql.SQLException {
+		return new ResultSetImpl(this.stat.executeQuery());
 	}
 
 	@Override
@@ -1390,8 +1391,8 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	@Override
-	public java.sql.ResultSet executeQuery(java.lang.String sql) throws java.sql.SQLException {
-		return this.stat.executeQuery(sql);
+	public ResultSetImpl executeQuery(java.lang.String sql) throws java.sql.SQLException {
+		return new ResultSetImpl(this.stat.executeQuery(sql));
 	}
 
 	@Override
