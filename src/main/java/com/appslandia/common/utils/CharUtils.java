@@ -74,9 +74,8 @@ public class CharUtils {
 		int avgLen = ValueUtils.valueOrMin(len / sources.length, 1);
 
 		int size = 0;
-		int[] rdSrcIndexes = RandomUtils.nextIndexes(sources.length, random);
 
-		for (int srcIndex : rdSrcIndexes) {
+		for (int srcIndex = 0; srcIndex < sources.length; srcIndex++) {
 			if (size >= len)
 				break;
 
