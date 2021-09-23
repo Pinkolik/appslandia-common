@@ -21,6 +21,7 @@
 package com.appslandia.common.record;
 
 import java.lang.reflect.Array;
+import java.util.Objects;
 
 import com.appslandia.common.utils.AssertUtils;
 
@@ -41,13 +42,12 @@ public class ValidValuesValidator implements FieldValidator {
 		if (value == null) {
 			return null;
 		}
-		String valueToCheck = value.toString();
 
 		int len = Array.getLength(constraintArgs);
 		for (int i = 0; i < len; i++) {
-			String validValue = String.valueOf(Array.get(constraintArgs, i));
+			Object validValue = Array.get(constraintArgs, i);
 
-			if (validValue.equalsIgnoreCase(valueToCheck)) {
+			if (Objects.equals(value, validValue)) {
 				return null;
 			}
 		}
