@@ -101,10 +101,6 @@ public class Field implements Serializable {
 		return this.constraints;
 	}
 
-	public Object getConstraint(String name) {
-		return this.constraints.get(name);
-	}
-
 	public Field addConstraint(String name, Object constraintArgs) {
 		this.constraints.put(name, constraintArgs);
 		return this;

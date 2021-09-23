@@ -64,7 +64,8 @@ public class FieldValidators {
 
 	public void validateField(Field field, Object value, List<FieldError> errors) {
 		for (Entry<String, Object> constraint : field.getConstraints().entrySet()) {
-			FieldError error = getValidator(constraint.getKey()).validate(value, field.getConstraint(constraint.getKey()));
+			FieldError error = getValidator(constraint.getKey()).validate(value, constraint.getValue());
+
 			if (error != null) {
 				errors.add(error);
 			}
@@ -75,6 +76,7 @@ public class FieldValidators {
 		List<FieldError> errors = new ArrayList<>(2);
 		for (Field field : table.getFields()) {
 			validateField(field, record.get(field.getName()), errors);
+
 			if (!errors.isEmpty()) {
 				callback.onError(field.getName(), errors);
 			}
@@ -84,8 +86,10 @@ public class FieldValidators {
 	public void validateKey(Record key, Table table, Callback callback) {
 		List<FieldError> errors = new ArrayList<>(2);
 		for (Field field : table.getFields()) {
+
 			if (field.isKey()) {
 				validateField(field, key.get(field.getName()), errors);
+
 				if (!errors.isEmpty()) {
 					callback.onError(field.getName(), errors);
 				}
@@ -97,6 +101,7 @@ public class FieldValidators {
 		List<FieldError> errors = new ArrayList<>(2);
 		for (Field field : table.getFields()) {
 			validateField(field, record.get(field.getName()), errors);
+
 			if (!errors.isEmpty()) {
 				throw new ValidatorException("field=" + field.getName() + ", errors=" + new ToStringBuilder(3).toString(errors));
 			}
@@ -108,6 +113,7 @@ public class FieldValidators {
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 				validateField(field, key.get(field.getName()), errors);
+
 				if (!errors.isEmpty()) {
 					throw new ValidatorException("field=" + field.getName() + ", errors=" + new ToStringBuilder(3).toString(errors));
 				}
