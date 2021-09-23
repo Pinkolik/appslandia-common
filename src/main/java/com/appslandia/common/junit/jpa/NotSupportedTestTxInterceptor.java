@@ -18,31 +18,32 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.junit.cdi_transaction;
+package com.appslandia.common.junit.jpa;
 
-import javax.persistence.EntityManager;
+import javax.interceptor.AroundInvoke;
+/**
+ *
+ * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
+ *
+ */
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-import com.appslandia.common.jpa.EntityManagerAccessor;
+@Transactional(value = TxType.NOT_SUPPORTED)
+@Interceptor
+public class NotSupportedTestTxInterceptor extends TestTxInterceptor {
+	private static final long serialVersionUID = 1L;
 
-public class TestEntityManager extends EntityManagerAccessor {
+	@AroundInvoke
+	public Object doTran(InvocationContext context) throws Exception {
 
-	final boolean isSharedEmf;
-
-	public TestEntityManager(boolean isSharedEmf) {
-		this.isSharedEmf = isSharedEmf;
-	}
-
-	@Override
-	protected EntityManager getEm() {
-		if (this.isSharedEmf) {
-			return SharedEmfTestEntityManagerExtension.emHolder.val();
-		} else {
-			return TestEntityManagerExtension.emHolder.val();
-		}
+		return super.doTran(context);
 	}
 }

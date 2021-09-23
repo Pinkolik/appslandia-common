@@ -18,27 +18,25 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.junit.cdi_transaction;
+package com.appslandia.common.junit.jpa;
 
-import javax.interceptor.AroundInvoke;
-import javax.interceptor.Interceptor;
-import javax.interceptor.InvocationContext;
-import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
+
+import com.appslandia.common.jpa.EntityManagerAccessor;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-@Transactional(value = TxType.MANDATORY)
-@Interceptor
-public class MandatoryTestTxInterceptor extends TestTxInterceptor {
-	private static final long serialVersionUID = 1L;
+public class TestEntityManagerProducer {
 
-	@AroundInvoke
-	public Object doTran(InvocationContext context) throws Exception {
+	@Inject
+	protected TestEmfControl testEmfControl;
 
-		return super.doTran(context);
+	@Produces
+	public EntityManagerAccessor produce() {
+		return new TestEntityManager(this.testEmfControl.isSharedEmf());
 	}
 }

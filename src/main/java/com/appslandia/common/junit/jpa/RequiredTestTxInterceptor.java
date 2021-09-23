@@ -18,7 +18,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.junit.cdi_transaction;
+package com.appslandia.common.junit.jpa;
 
 import javax.interceptor.AroundInvoke;
 /**
@@ -29,16 +29,15 @@ import javax.interceptor.AroundInvoke;
 import javax.interceptor.Interceptor;
 import javax.interceptor.InvocationContext;
 import javax.transaction.Transactional;
-import javax.transaction.Transactional.TxType;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-@Transactional(value = TxType.REQUIRES_NEW)
+@Transactional
 @Interceptor
-public class RequiresNewTestTxInterceptor extends TestTxInterceptor {
+public class RequiredTestTxInterceptor extends TestTxInterceptor {
 	private static final long serialVersionUID = 1L;
 
 	@AroundInvoke

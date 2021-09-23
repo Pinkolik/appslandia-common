@@ -18,30 +18,32 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.junit.cdi_transaction;
+package com.appslandia.common.junit.jpa;
+
+import javax.interceptor.AroundInvoke;
+/**
+ *
+ * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
+ *
+ */
+import javax.interceptor.Interceptor;
+import javax.interceptor.InvocationContext;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public interface TestEmfControl {
+@Transactional(value = TxType.REQUIRES_NEW)
+@Interceptor
+public class RequiresNewTestTxInterceptor extends TestTxInterceptor {
+	private static final long serialVersionUID = 1L;
 
-	boolean isSharedEmf();
+	@AroundInvoke
+	public Object doTran(InvocationContext context) throws Exception {
 
-	public static class SharedEmf implements TestEmfControl {
-
-		@Override
-		public boolean isSharedEmf() {
-			return true;
-		}
-	}
-
-	public static class NotSharedEmf implements TestEmfControl {
-
-		@Override
-		public boolean isSharedEmf() {
-			return false;
-		}
+		return super.doTran(context);
 	}
 }
