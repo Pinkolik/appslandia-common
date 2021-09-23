@@ -18,27 +18,29 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class BitValuesValidator implements FieldValidator {
+public class FixedLengthValidator implements FieldValidator {
 
-	public static final String ERROR_MSG_KEY = BitValuesValidator.class.getName() + ".message";
+	public static final String ERROR_MSG_KEY = FixedLengthValidator.class.getName() + ".message";
 
 	@Override
 	public FieldError validate(Object value, Object constraintArgs) {
 		if (value == null) {
 			return null;
 		}
-		int bitValue = ((Number) value).intValue();
+		String strValue = (String) value;
+		int fixedLength = (Integer) constraintArgs;
 
-		if ((bitValue == 0) || (bitValue == 1)) {
-			return null;
+		if (strValue.length() != fixedLength) {
+			return new FieldError(ERROR_MSG_KEY, constraintArgs);
 		}
-		return new FieldError(ERROR_MSG_KEY, constraintArgs);
+
+		return null;
 	}
 }

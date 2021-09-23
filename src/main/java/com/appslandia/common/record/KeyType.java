@@ -18,17 +18,15 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class ValidatorException extends RuntimeException {
-	private static final long serialVersionUID = 1L;
+public enum KeyType {
 
-	public ValidatorException(String message) {
-		super(message);
-	}
+	AUTO_KEY, KEY, NON_KEY
+
 }

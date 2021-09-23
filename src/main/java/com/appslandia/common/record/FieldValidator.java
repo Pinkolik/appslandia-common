@@ -18,29 +18,34 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class MaxLengthValidator implements FieldValidator {
+@FunctionalInterface
+public interface FieldValidator {
 
-	public static final String ERROR_MSG_KEY = MaxLengthValidator.class.getName() + ".message";
+	FieldError validate(Object value, Object constraintArgs);
 
-	@Override
-	public FieldError validate(Object value, Object constraintArgs) {
-		if (value == null) {
-			return null;
+	public static class FieldError {
+
+		final String errorMsgKey;
+		final Object constraintArgs;
+
+		public FieldError(String errorMsgKey, Object constraintArgs) {
+			this.errorMsgKey = errorMsgKey;
+			this.constraintArgs = constraintArgs;
 		}
-		String strValue = (String) value;
-		int maxLength = (Integer) constraintArgs;
 
-		if (strValue.length() > maxLength) {
-			return new FieldError(ERROR_MSG_KEY, constraintArgs);
+		public String getErrorMsgKey() {
+			return this.errorMsgKey;
 		}
 
-		return null;
+		public Object getConstraintArgs() {
+			return this.constraintArgs;
+		}
 	}
 }

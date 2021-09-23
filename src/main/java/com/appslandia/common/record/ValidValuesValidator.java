@@ -18,52 +18,39 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
 
-import com.appslandia.common.base.CaseInsensitiveMap;
 import com.appslandia.common.utils.AssertUtils;
-import com.appslandia.common.utils.ObjectUtils;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class Record extends CaseInsensitiveMap<Object> {
-	private static final long serialVersionUID = 1L;
+public class ValidValuesValidator implements FieldValidator {
 
-	public Record() {
-		super();
-	}
+	public static final String ERROR_MSG_KEY = ValidValuesValidator.class.getName() + ".message";
 
-	public Record(Map<String, Object> innerMap) {
-		super(innerMap);
-	}
+	@Override
+	public FieldError validate(Object value, Object constraintArgs) {
+		AssertUtils.assertNotNull(constraintArgs, "constraintArgs is required.");
+		AssertUtils.assertTrue(constraintArgs.getClass().isArray(), "constraintArgs must be an array.");
 
-	public Record set(String name, Object value) {
-		this.put(name, value);
-		return this;
-	}
-
-	public <T> T get(String name) {
-		return ObjectUtils.cast(super.get(name));
-	}
-
-	public int getInt(String name) throws IllegalStateException {
-		Integer val = (Integer) super.get(name);
-		AssertUtils.assertStateNotNull(val);
-		return val;
-	}
-
-	public List<Object> toValues(String[] columnLabels) {
-		List<Object> values = new ArrayList<>(columnLabels.length);
-		for (String label : columnLabels) {
-			values.add(super.get(label));
+		if (value == null) {
+			return null;
 		}
-		return values;
+		String valueToCheck = value.toString();
+
+		int len = Array.getLength(constraintArgs);
+		for (int i = 0; i < len; i++) {
+			String validValue = String.valueOf(Array.get(constraintArgs, i));
+
+			if (validValue.equalsIgnoreCase(valueToCheck)) {
+				return null;
+			}
+		}
+		return new FieldError(ERROR_MSG_KEY, constraintArgs);
 	}
 }

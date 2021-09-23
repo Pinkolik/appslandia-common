@@ -18,7 +18,7 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.appslandia.common.base.ToStringBuilder;
-import com.appslandia.common.easyrecord.FieldValidator.FieldError;
+import com.appslandia.common.record.FieldValidator.FieldError;
 
 /**
  *

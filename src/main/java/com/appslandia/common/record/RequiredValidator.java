@@ -18,39 +18,22 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
-
-import java.lang.reflect.Array;
-
-import com.appslandia.common.utils.AssertUtils;
+package com.appslandia.common.record;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class ValidValuesValidator implements FieldValidator {
+public class RequiredValidator implements FieldValidator {
 
-	public static final String ERROR_MSG_KEY = ValidValuesValidator.class.getName() + ".message";
+	public static final String ERROR_MSG_KEY = RequiredValidator.class.getName() + ".message";
 
 	@Override
 	public FieldError validate(Object value, Object constraintArgs) {
-		AssertUtils.assertNotNull(constraintArgs, "constraintArgs is required.");
-		AssertUtils.assertTrue(constraintArgs.getClass().isArray(), "constraintArgs must be an array.");
-
 		if (value == null) {
-			return null;
+			return new FieldError(ERROR_MSG_KEY, constraintArgs);
 		}
-		String valueToCheck = value.toString();
-
-		int len = Array.getLength(constraintArgs);
-		for (int i = 0; i < len; i++) {
-			String validValue = String.valueOf(Array.get(constraintArgs, i));
-
-			if (validValue.equalsIgnoreCase(valueToCheck)) {
-				return null;
-			}
-		}
-		return new FieldError(ERROR_MSG_KEY, constraintArgs);
+		return null;
 	}
 }

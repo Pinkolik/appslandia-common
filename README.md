@@ -3,7 +3,7 @@
 ## Features
 - Cryptography utilities
 - JDBC utilities (Named parameters, Array parameters, LIKE_ANY operator, etc.)
-- EasyRecord framework
+- Record framework
 - DI framework
 - Type formatters/parsers with localization
 - Java bean validators

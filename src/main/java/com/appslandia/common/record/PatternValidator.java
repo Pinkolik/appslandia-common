@@ -18,15 +18,38 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public enum KeyType {
+public class PatternValidator implements FieldValidator {
 
-	AUTO_KEY, KEY, NON_KEY
+	final ConcurrentMap<String, Pattern> patternMap = new ConcurrentHashMap<>();
 
+	public static final String ERROR_MSG_KEY = PatternValidator.class.getName() + ".message";
+
+	@Override
+	public FieldError validate(Object value, Object constraintArgs) {
+		if (value == null) {
+			return null;
+		}
+
+		String strValue = (String) value;
+		if (getPattern((String) constraintArgs).matcher(strValue).matches()) {
+			return null;
+		}
+
+		return new FieldError(ERROR_MSG_KEY, constraintArgs);
+	}
+
+	private Pattern getPattern(final String pattern) {
+		return this.patternMap.computeIfAbsent(pattern, p -> Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
+	}
 }

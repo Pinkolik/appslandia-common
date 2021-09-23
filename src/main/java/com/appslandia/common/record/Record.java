@@ -18,22 +18,52 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-package com.appslandia.common.easyrecord;
+package com.appslandia.common.record;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import com.appslandia.common.base.CaseInsensitiveMap;
+import com.appslandia.common.utils.AssertUtils;
+import com.appslandia.common.utils.ObjectUtils;
 
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class RequiredValidator implements FieldValidator {
+public class Record extends CaseInsensitiveMap<Object> {
+	private static final long serialVersionUID = 1L;
 
-	public static final String ERROR_MSG_KEY = RequiredValidator.class.getName() + ".message";
+	public Record() {
+		super();
+	}
 
-	@Override
-	public FieldError validate(Object value, Object constraintArgs) {
-		if (value == null) {
-			return new FieldError(ERROR_MSG_KEY, constraintArgs);
+	public Record(Map<String, Object> innerMap) {
+		super(innerMap);
+	}
+
+	public Record set(String name, Object value) {
+		this.put(name, value);
+		return this;
+	}
+
+	public <T> T get(String name) {
+		return ObjectUtils.cast(super.get(name));
+	}
+
+	public int getInt(String name) throws IllegalStateException {
+		Integer val = (Integer) super.get(name);
+		AssertUtils.assertStateNotNull(val);
+		return val;
+	}
+
+	public List<Object> toValues(String[] columnLabels) {
+		List<Object> values = new ArrayList<>(columnLabels.length);
+		for (String label : columnLabels) {
+			values.add(super.get(label));
 		}
-		return null;
+		return values;
 	}
 }
