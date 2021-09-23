@@ -46,6 +46,7 @@ public class FieldValidators {
 		putValidator("required", new RequiredValidator());
 		putValidator("bitValues", new BitValuesValidator());
 		putValidator("maxLength", new MaxLengthValidator());
+		putValidator("minLength", new MinLengthValidator());
 		putValidator("validValues", new ValidValuesValidator());
 		putValidator("pattern", new PatternValidator());
 	}
