@@ -48,7 +48,7 @@ public class DbManager implements AutoCloseable {
 
 	private Connection conn;
 	private boolean internalConn;
-	private Map<String, StatCache> statCache = new LinkedHashMap<>();
+	private Map<String, Statements> tableStats = new LinkedHashMap<>();
 
 	public DbManager() throws SQLException {
 		this(DbManager.getDataSource());
@@ -107,20 +107,20 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	protected StatCache getStatCache(String tableName) {
-		StatCache cache = this.statCache.get(tableName);
-		if (cache == null) {
-			cache = new StatCache();
-			this.statCache.put(tableName, cache);
+	protected Statements getStatements(String tableName) {
+		Statements stats = this.tableStats.get(tableName);
+		if (stats == null) {
+			stats = new Statements();
+			this.tableStats.put(tableName, stats);
 		}
-		return cache;
+		return stats;
 	}
 
 	protected long insert(Record record, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
-		StatCache cache = getStatCache(table.getName());
-		if (cache.insertStat == null) {
-			cache.insertStat = new StatementImpl(this.conn, table.getInsertSql(), (table.getAutoKey() != null));
+		Statements stats = getStatements(table.getName());
+		if (stats.insertStat == null) {
+			stats.insertStat = new StatementImpl(this.conn, table.getInsertSql(), (table.getAutoKey() != null));
 		}
 
 		for (Field field : table.getFields()) {
@@ -128,15 +128,15 @@ public class DbManager implements AutoCloseable {
 
 				Object val = record.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
-				setParameter(cache.insertStat, field.getName(), val, field.getSqlType());
+				setParameter(stats.insertStat, field.getName(), val, field.getSqlType());
 			}
 		}
 
 		int rowAffected = -1;
 		if (!addBatch) {
-			rowAffected = cache.insertStat.executeUpdate();
+			rowAffected = stats.insertStat.executeUpdate();
 			if (table.getAutoKey() != null) {
-				try (ResultSet rs = cache.insertStat.getGeneratedKeys()) {
+				try (ResultSet rs = stats.insertStat.getGeneratedKeys()) {
 
 					if (rs.next()) {
 						Object generatedKey = rs.getObject(1);
@@ -146,7 +146,7 @@ public class DbManager implements AutoCloseable {
 				}
 			}
 		} else {
-			cache.insertStat.addBatch();
+			stats.insertStat.addBatch();
 		}
 		return rowAffected;
 	}
@@ -161,23 +161,23 @@ public class DbManager implements AutoCloseable {
 
 	protected int update(Record record, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
-		StatCache cache = getStatCache(table.getName());
-		if (cache.updateStat == null) {
-			cache.updateStat = new StatementImpl(this.conn, table.getUpdateSql());
+		Statements stats = getStatements(table.getName());
+		if (stats.updateStat == null) {
+			stats.updateStat = new StatementImpl(this.conn, table.getUpdateSql());
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey() || field.isUpdatable()) {
 
 				Object val = record.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
-				setParameter(cache.updateStat, field.getName(), val, field.getSqlType());
+				setParameter(stats.updateStat, field.getName(), val, field.getSqlType());
 			}
 		}
 		int rowAffected = -1;
 		if (!addBatch) {
-			rowAffected = cache.updateStat.executeUpdate();
+			rowAffected = stats.updateStat.executeUpdate();
 		} else {
-			cache.updateStat.addBatch();
+			stats.updateStat.addBatch();
 		}
 		return rowAffected;
 	}
@@ -192,61 +192,61 @@ public class DbManager implements AutoCloseable {
 
 	protected int delete(Record key, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
-		StatCache cache = getStatCache(table.getName());
-		if (cache.deleteStat == null) {
-			cache.deleteStat = new StatementImpl(this.conn, table.getDeleteSql());
+		Statements stats = getStatements(table.getName());
+		if (stats.deleteStat == null) {
+			stats.deleteStat = new StatementImpl(this.conn, table.getDeleteSql());
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 
 				Object val = key.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
-				setParameter(cache.deleteStat, field.getName(), val, field.getSqlType());
+				setParameter(stats.deleteStat, field.getName(), val, field.getSqlType());
 			}
 		}
 		int rowAffected = -1;
 		if (!addBatch) {
-			rowAffected = cache.deleteStat.executeUpdate();
+			rowAffected = stats.deleteStat.executeUpdate();
 		} else {
-			cache.deleteStat.addBatch();
+			stats.deleteStat.addBatch();
 		}
 		return rowAffected;
 	}
 
 	public Record getRecord(Record key, Table table) throws SQLException {
 		this.assertNotClosed();
-		StatCache cache = getStatCache(table.getName());
-		if (cache.getStat == null) {
-			cache.getStat = new StatementImpl(this.conn, table.getGetSql());
+		Statements stats = getStatements(table.getName());
+		if (stats.getStat == null) {
+			stats.getStat = new StatementImpl(this.conn, table.getGetSql());
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 
 				Object val = key.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
-				setParameter(cache.getStat, field.getName(), val, field.getSqlType());
+				setParameter(stats.getStat, field.getName(), val, field.getSqlType());
 			}
 		}
-		try (ResultSet rs = cache.getStat.executeQuery()) {
+		try (ResultSet rs = stats.getStat.executeQuery()) {
 			return RecordUtils.executeSingle(rs);
 		}
 	}
 
 	public boolean exists(Record key, Table table) throws SQLException {
 		this.assertNotClosed();
-		StatCache cache = getStatCache(table.getName());
-		if (cache.existsStat == null) {
-			cache.existsStat = new StatementImpl(this.conn, table.getExistsSql());
+		Statements stats = getStatements(table.getName());
+		if (stats.existsStat == null) {
+			stats.existsStat = new StatementImpl(this.conn, table.getExistsSql());
 		}
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 
 				Object val = key.get(field.getName());
 				val = this.toSqlObject(val, field.getSqlType());
-				setParameter(cache.existsStat, field.getName(), val, field.getSqlType());
+				setParameter(stats.existsStat, field.getName(), val, field.getSqlType());
 			}
 		}
-		long count = cache.existsStat.executeCountLong();
+		long count = stats.existsStat.executeCountLong();
 		return count == 1;
 	}
 
@@ -308,15 +308,15 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 		AssertUtils.assertTrue(!this.conn.getAutoCommit());
 
-		for (StatCache cache : this.statCache.values()) {
-			if (cache.insertStat != null) {
-				cache.insertStat.executeBatch();
+		for (Statements stats : this.tableStats.values()) {
+			if (stats.insertStat != null) {
+				stats.insertStat.executeBatch();
 			}
-			if (cache.updateStat != null) {
-				cache.updateStat.executeBatch();
+			if (stats.updateStat != null) {
+				stats.updateStat.executeBatch();
 			}
-			if (cache.deleteStat != null) {
-				cache.deleteStat.executeBatch();
+			if (stats.deleteStat != null) {
+				stats.deleteStat.executeBatch();
 			}
 		}
 	}
@@ -345,24 +345,24 @@ public class DbManager implements AutoCloseable {
 	private boolean closed = false;
 
 	private void closeStatements() throws SQLException {
-		List<StatCache> caches = new ArrayList<>(this.statCache.values());
-		Collections.reverse(caches);
+		List<Statements> tblStats = new ArrayList<>(this.tableStats.values());
+		Collections.reverse(tblStats);
 
-		for (StatCache cache : caches) {
-			if (cache.insertStat != null) {
-				cache.insertStat.close();
+		for (Statements stats : tblStats) {
+			if (stats.insertStat != null) {
+				stats.insertStat.close();
 			}
-			if (cache.updateStat != null) {
-				cache.updateStat.close();
+			if (stats.updateStat != null) {
+				stats.updateStat.close();
 			}
-			if (cache.deleteStat != null) {
-				cache.deleteStat.close();
+			if (stats.deleteStat != null) {
+				stats.deleteStat.close();
 			}
-			if (cache.getStat != null) {
-				cache.getStat.close();
+			if (stats.getStat != null) {
+				stats.getStat.close();
 			}
-			if (cache.existsStat != null) {
-				cache.existsStat.close();
+			if (stats.existsStat != null) {
+				stats.existsStat.close();
 			}
 		}
 	}
@@ -390,7 +390,7 @@ public class DbManager implements AutoCloseable {
 		__dataSource = dataSource;
 	}
 
-	static class StatCache {
+	static class Statements {
 		StatementImpl insertStat;
 		StatementImpl updateStat;
 		StatementImpl deleteStat;
