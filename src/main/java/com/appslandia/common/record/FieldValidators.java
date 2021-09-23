@@ -44,11 +44,13 @@ public class FieldValidators {
 
 	protected void initialize() {
 		putValidator("required", new RequiredValidator());
-		putValidator("bitValues", new BitValuesValidator());
+		putValidator("pattern", new PatternValidator());
+
 		putValidator("maxLength", new MaxLengthValidator());
 		putValidator("minLength", new MinLengthValidator());
+
+		putValidator("bitValues", new BitValuesValidator());
 		putValidator("validValues", new ValidValuesValidator());
-		putValidator("pattern", new PatternValidator());
 	}
 
 	public FieldValidator getValidator(String name) throws IllegalArgumentException {
