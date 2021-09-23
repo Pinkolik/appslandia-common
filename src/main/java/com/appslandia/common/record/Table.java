@@ -97,9 +97,11 @@ public class Table extends InitializeObject implements Serializable {
 	protected String buildInsertSQL() {
 		TextBuilder sb = new TextBuilder().append("INSERT INTO ").append(this.name);
 		sb.append(" ( ");
+
 		boolean isFirst = true;
 		for (Field field : this.fields) {
 			if (!field.isAutoKey()) {
+
 				if (isFirst) {
 					sb.append(field.getName());
 					isFirst = false;
@@ -110,9 +112,11 @@ public class Table extends InitializeObject implements Serializable {
 		}
 		sb.append(" )");
 		sb.append(" VALUES ( ");
+
 		isFirst = true;
 		for (Field field : this.fields) {
 			if (!field.isAutoKey()) {
+
 				if (isFirst) {
 					sb.append(field.getParamName());
 					isFirst = false;
@@ -128,9 +132,11 @@ public class Table extends InitializeObject implements Serializable {
 	protected String buildUpdateSQL() {
 		TextBuilder sb = new TextBuilder().append("UPDATE ").append(this.name);
 		sb.append(" SET ");
+
 		boolean isFirst = true;
 		for (Field field : this.fields) {
 			if (field.isUpdatable()) {
+
 				if (isFirst) {
 					sb.append(field.getName()).append("=").append(field.getParamName());
 					isFirst = false;
@@ -173,6 +179,7 @@ public class Table extends InitializeObject implements Serializable {
 		boolean isFirst = true;
 		for (Field field : this.fields) {
 			if (field.isKey()) {
+
 				if (isFirst) {
 					sqlBuilder.append(field.getName()).append("=").append(field.getParamName());
 					isFirst = false;
