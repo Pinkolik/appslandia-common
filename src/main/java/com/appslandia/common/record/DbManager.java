@@ -87,14 +87,6 @@ public class DbManager implements AutoCloseable {
 		return val;
 	}
 
-	public long insert(Record record, Table table) throws SQLException {
-		return this.insert(record, table, false);
-	}
-
-	public void insertBatch(Record record, Table table) throws SQLException {
-		this.insert(record, table, true);
-	}
-
 	protected void setParameter(StatementImpl stat, String parameterName, Object val, int sqlType) throws SQLException {
 		if (val != null) {
 			stat.setObject(parameterName, val);
@@ -116,8 +108,17 @@ public class DbManager implements AutoCloseable {
 		return stats;
 	}
 
+	public long insert(Record record, Table table) throws SQLException {
+		return this.insert(record, table, false);
+	}
+
+	public void insertBatch(Record record, Table table) throws SQLException {
+		this.insert(record, table, true);
+	}
+
 	protected long insert(Record record, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
+
 		Statements stats = getStatements(table.getName());
 		if (stats.insertStat == null) {
 			stats.insertStat = new StatementImpl(this.conn, table.getInsertSql(), (table.getAutoKey() != null));
@@ -161,10 +162,12 @@ public class DbManager implements AutoCloseable {
 
 	protected int update(Record record, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
+
 		Statements stats = getStatements(table.getName());
 		if (stats.updateStat == null) {
 			stats.updateStat = new StatementImpl(this.conn, table.getUpdateSql());
 		}
+
 		for (Field field : table.getFields()) {
 			if (field.isKey() || field.isUpdatable()) {
 
@@ -192,10 +195,12 @@ public class DbManager implements AutoCloseable {
 
 	protected int delete(Record key, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
+
 		Statements stats = getStatements(table.getName());
 		if (stats.deleteStat == null) {
 			stats.deleteStat = new StatementImpl(this.conn, table.getDeleteSql());
 		}
+
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 
@@ -215,10 +220,12 @@ public class DbManager implements AutoCloseable {
 
 	public Record getRecord(Record key, Table table) throws SQLException {
 		this.assertNotClosed();
+
 		Statements stats = getStatements(table.getName());
 		if (stats.getStat == null) {
 			stats.getStat = new StatementImpl(this.conn, table.getGetSql());
 		}
+
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 
@@ -234,10 +241,12 @@ public class DbManager implements AutoCloseable {
 
 	public boolean exists(Record key, Table table) throws SQLException {
 		this.assertNotClosed();
+
 		Statements stats = getStatements(table.getName());
 		if (stats.existsStat == null) {
 			stats.existsStat = new StatementImpl(this.conn, table.getExistsSql());
 		}
+
 		for (Field field : table.getFields()) {
 			if (field.isKey()) {
 
@@ -252,6 +261,7 @@ public class DbManager implements AutoCloseable {
 
 	public List<Record> getAll(Table table) throws SQLException {
 		this.assertNotClosed();
+
 		try (Statement stat = this.conn.createStatement()) {
 
 			try (ResultSet rs = stat.executeQuery(table.getGetAllSql())) {
@@ -262,6 +272,7 @@ public class DbManager implements AutoCloseable {
 
 	public Record executeSingle(String sql) throws SQLException {
 		this.assertNotClosed();
+
 		try (Statement stat = this.conn.createStatement()) {
 
 			try (ResultSet rs = stat.executeQuery(sql)) {
@@ -272,6 +283,7 @@ public class DbManager implements AutoCloseable {
 
 	public List<Record> executeList(String sql) throws SQLException {
 		this.assertNotClosed();
+
 		try (Statement stat = this.conn.createStatement()) {
 
 			try (ResultSet rs = stat.executeQuery(sql)) {
@@ -282,6 +294,7 @@ public class DbManager implements AutoCloseable {
 
 	public int executeUpdate(String sql) throws SQLException {
 		this.assertNotClosed();
+
 		try (Statement stat = this.conn.createStatement()) {
 			return stat.executeUpdate(sql);
 		}
@@ -289,6 +302,7 @@ public class DbManager implements AutoCloseable {
 
 	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn) throws SQLException {
 		this.assertNotClosed();
+
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSet rs = stat.executeQuery(sql)) {
 
