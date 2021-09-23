@@ -31,7 +31,7 @@ import com.appslandia.common.utils.AssertUtils;
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public abstract class ConcurrentService<K> extends MutexService<K> {
+public abstract class TaskMutexService<K> extends MutexService<K> {
 
 	public abstract ExecutorService getExecutorService();
 
