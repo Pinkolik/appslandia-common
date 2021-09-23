@@ -323,14 +323,14 @@ public class DbManager implements AutoCloseable {
 		AssertUtils.assertTrue(!this.conn.getAutoCommit());
 
 		for (Statements stats : this.tableStats.values()) {
-			if (stats.insertStat != null) {
-				stats.insertStat.executeBatch();
+			if (stats.deleteStat != null) {
+				stats.deleteStat.executeBatch();
 			}
 			if (stats.updateStat != null) {
 				stats.updateStat.executeBatch();
 			}
-			if (stats.deleteStat != null) {
-				stats.deleteStat.executeBatch();
+			if (stats.insertStat != null) {
+				stats.insertStat.executeBatch();
 			}
 		}
 	}
