@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  */
 public class PatternValidator implements FieldValidator {
 
-	final ConcurrentMap<String, Pattern> patternMap = new ConcurrentHashMap<>();
+	static final ConcurrentMap<String, Pattern> PATTERNS = new ConcurrentHashMap<>();
 
 	public static final String ERROR_MSG_KEY = PatternValidator.class.getName() + ".message";
 
@@ -49,7 +49,7 @@ public class PatternValidator implements FieldValidator {
 		return new FieldError(ERROR_MSG_KEY, constraintArgs);
 	}
 
-	private Pattern getPattern(final String pattern) {
-		return this.patternMap.computeIfAbsent(pattern, p -> Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
+	private static Pattern getPattern(final String pattern) {
+		return PATTERNS.computeIfAbsent(pattern, p -> Pattern.compile(pattern, Pattern.CASE_INSENSITIVE));
 	}
 }
