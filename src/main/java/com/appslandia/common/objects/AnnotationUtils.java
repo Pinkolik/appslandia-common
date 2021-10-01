@@ -24,6 +24,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -41,43 +42,21 @@ import com.appslandia.common.utils.ReflectionUtils;
  */
 public class AnnotationUtils {
 
-	public static boolean equals(Annotation[] src, Annotation[] annotations) {
-		if (annotations.length != src.length) {
+	public static boolean equals(Annotation[] anns1, Annotation[] anns2) {
+		if (anns2.length != anns1.length) {
 			return false;
 		}
-		if (annotations.length == 0) {
+		if (anns2.length == 0) {
 			return true;
 		}
-		for (Annotation ann2 : annotations) {
-			boolean matched = false;
-			for (Annotation ann1 : src) {
-				if (matched = ann1.equals(ann2)) {
-					break;
-				}
-			}
-			if (!matched) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.stream(anns2).allMatch(ann2 -> Arrays.stream(anns1).anyMatch(ann1 -> ann1.equals(ann2)));
 	}
 
 	public static boolean hasAnnotations(Annotation[] src, Annotation[] annotations) {
 		if (annotations.length == 0) {
 			return src.length == 0;
 		}
-		for (Annotation ann2 : annotations) {
-			boolean matched = false;
-			for (Annotation ann1 : src) {
-				if (matched = ann1.equals(ann2)) {
-					break;
-				}
-			}
-			if (!matched) {
-				return false;
-			}
-		}
-		return true;
+		return Arrays.stream(annotations).allMatch(ann -> Arrays.stream(src).anyMatch(srcAnn -> srcAnn.equals(ann)));
 	}
 
 	public static Annotation[] parseQualifiers(Annotation[] annotations) {
