@@ -38,7 +38,7 @@ public final class RecordUtils {
 
 	public static Record executeSingle(PreparedStatement stat) throws SQLException {
 		try (ResultSet rs = stat.executeQuery()) {
-			return executeSingle(stat);
+			return executeSingle(rs);
 		}
 	}
 
@@ -60,7 +60,7 @@ public final class RecordUtils {
 
 	public static List<Record> executeList(PreparedStatement stat) throws SQLException {
 		try (ResultSet rs = stat.executeQuery()) {
-			return executeList(stat);
+			return executeList(rs);
 		}
 	}
 
