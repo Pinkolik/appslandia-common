@@ -27,14 +27,14 @@ import java.util.function.Supplier;
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class SingletonSupplier<T> implements Supplier<T> {
+public class SingletonStore<T> implements Supplier<T> {
 
 	private volatile T t;
 	private Supplier<T> supplier;
 
 	final Object mutex = new Object();
 
-	public SingletonSupplier(Supplier<T> supplier) {
+	public SingletonStore(Supplier<T> supplier) {
 		this.supplier = supplier;
 	}
 
