@@ -33,7 +33,7 @@ import com.appslandia.common.utils.AssertUtils;
  */
 public abstract class TaskMutexService<K> extends MutexService<K> {
 
-	public abstract ExecutorService getExecutorService();
+	protected abstract ExecutorService getExecutorService();
 
 	public <V> Future<V> execute(final K mutexKey, final Callable<V> task) throws Exception {
 		this.initialize();
