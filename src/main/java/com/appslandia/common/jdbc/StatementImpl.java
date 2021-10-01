@@ -275,27 +275,27 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public void setLike(String parameterName, String value) throws java.sql.SQLException {
-		setString2(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.CONTAINS));
+		setString(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.CONTAINS));
 	}
 
 	public void setLikeStart(String parameterName, String value) throws java.sql.SQLException {
-		setString2(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.STARTS_WITH));
+		setString(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.STARTS_WITH));
 	}
 
 	public void setLikeEnd(String parameterName, String value) throws java.sql.SQLException {
-		setString2(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.ENDS_WITH));
+		setString(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.ENDS_WITH));
 	}
 
 	public void setNLike(String parameterName, String value) throws java.sql.SQLException {
-		setNString2(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.CONTAINS));
+		setNString(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.CONTAINS));
 	}
 
 	public void setNLikeStart(String parameterName, String value) throws java.sql.SQLException {
-		setNString2(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.STARTS_WITH));
+		setNString(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.STARTS_WITH));
 	}
 
 	public void setNLikeEnd(String parameterName, String value) throws java.sql.SQLException {
-		setNString2(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.ENDS_WITH));
+		setNString(parameterName, SqlLikeEscaper.toLikePattern(value, LikeType.ENDS_WITH));
 	}
 
 	// Set LIKE_ANY Parameters
@@ -318,7 +318,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setString2(Sql.toParamName(parameterName, i), (i < values.length) ? SqlLikeEscaper.toLikePattern(values[i], likeType) : falsePattern);
+			setString(Sql.toParamName(parameterName, i), (i < values.length) ? SqlLikeEscaper.toLikePattern(values[i], likeType) : falsePattern);
 		}
 	}
 
@@ -339,7 +339,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setNString2(Sql.toParamName(parameterName, i), (i < values.length) ? SqlLikeEscaper.toLikePattern(values[i], likeType) : falsePattern);
+			setNString(Sql.toParamName(parameterName, i), (i < values.length) ? SqlLikeEscaper.toLikePattern(values[i], likeType) : falsePattern);
 		}
 	}
 
@@ -351,7 +351,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setString2(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
+			setString(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
 		}
 	}
 
@@ -360,7 +360,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setNString2(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
+			setNString(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
 		}
 	}
 
@@ -447,7 +447,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setBigDecimal2(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
+			setBigDecimal(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
 		}
 	}
 
@@ -456,7 +456,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setDate2(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
+			setDate(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
 		}
 	}
 
@@ -465,7 +465,7 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setTimestamp2(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
+			setTimestamp(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
 		}
 	}
 
@@ -474,11 +474,11 @@ public class StatementImpl implements PreparedStatement {
 		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
 
 		for (int i = 0; i < arrayLen; i++) {
-			setTime2(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
+			setTime(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
 		}
 	}
 
-	// Set Nullable Parameters
+	// Set Primitive Wrapper Parameters
 
 	public void setBoolean2(String parameterName, Boolean value) throws java.sql.SQLException {
 		if (value == null) {
@@ -488,51 +488,11 @@ public class StatementImpl implements PreparedStatement {
 		}
 	}
 
-	public void setChar2(String parameterName, String value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.CHAR);
-		} else {
-			setString(parameterName, value);
-		}
-	}
-
-	public void setNChar2(String parameterName, String value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.NCHAR);
-		} else {
-			setNString(parameterName, value);
-		}
-	}
-
-	public void setString2(String parameterName, String value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.VARCHAR);
-		} else {
-			setString(parameterName, value);
-		}
-	}
-
-	public void setNString2(String parameterName, String value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.NVARCHAR);
-		} else {
-			setNString(parameterName, value);
-		}
-	}
-
 	public void setByte2(String parameterName, Byte value) throws java.sql.SQLException {
 		if (value == null) {
 			setNull(parameterName, Types.TINYINT);
 		} else {
 			setByte(parameterName, value);
-		}
-	}
-
-	public void setBytes2(String parameterName, byte[] value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.VARBINARY);
-		} else {
-			setBytes(parameterName, value);
 		}
 	}
 
@@ -573,158 +533,6 @@ public class StatementImpl implements PreparedStatement {
 			setNull(parameterName, Types.DOUBLE);
 		} else {
 			setDouble(parameterName, value);
-		}
-	}
-
-	public void setBigDecimal2(String parameterName, java.math.BigDecimal value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.NUMERIC);
-		} else {
-			setBigDecimal(parameterName, value);
-		}
-	}
-
-	public void setDate2(String parameterName, java.sql.Date value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.DATE);
-		} else {
-			setDate(parameterName, value);
-		}
-	}
-
-	public void setTimestamp2(String parameterName, java.sql.Timestamp value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.TIMESTAMP);
-		} else {
-			setTimestamp(parameterName, value);
-		}
-	}
-
-	public void setTime2(String parameterName, java.sql.Time value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.TIME);
-		} else {
-			setTime(parameterName, value);
-		}
-	}
-
-	public void setURL2(String parameterName, java.net.URL value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.DATALINK);
-		} else {
-			setURL(parameterName, value);
-		}
-	}
-
-	public void setArray2(String parameterName, java.sql.Array value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.ARRAY);
-		} else {
-			setArray(parameterName, value);
-		}
-	}
-
-	public void setSQLXML2(String parameterName, java.sql.SQLXML value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.SQLXML);
-		} else {
-			setSQLXML(parameterName, value);
-		}
-	}
-
-	public void setRef2(String parameterName, java.sql.Ref value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.REF);
-		} else {
-			setRef(parameterName, value);
-		}
-	}
-
-	public void setRowId2(String parameterName, java.sql.RowId value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.ROWID);
-		} else {
-			setRowId(parameterName, value);
-		}
-	}
-
-	public void setClob2(String parameterName, java.sql.Clob value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.CLOB);
-		} else {
-			setClob(parameterName, value);
-		}
-	}
-
-	public void setClob2(String parameterName, java.io.Reader value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.CLOB);
-		} else {
-			setClob(parameterName, value);
-		}
-	}
-
-	public void setNClob2(String parameterName, java.sql.NClob value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.NCLOB);
-		} else {
-			setNClob(parameterName, value);
-		}
-	}
-
-	public void setNClob2(String parameterName, java.io.Reader value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.NCLOB);
-		} else {
-			setNClob(parameterName, value);
-		}
-	}
-
-	public void setAsciiStream2(String parameterName, java.io.InputStream value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.LONGVARCHAR);
-		} else {
-			setAsciiStream(parameterName, value);
-		}
-	}
-
-	public void setCharacterStream2(String parameterName, java.io.Reader value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.LONGVARCHAR);
-		} else {
-			setCharacterStream(parameterName, value);
-		}
-	}
-
-	public void setNCharacterStream2(String parameterName, java.io.Reader value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.LONGNVARCHAR);
-		} else {
-			setNCharacterStream(parameterName, value);
-		}
-	}
-
-	public void setBlob2(String parameterName, java.sql.Blob value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.BLOB);
-		} else {
-			setBlob(parameterName, value);
-		}
-	}
-
-	public void setBlob2(String parameterName, java.io.InputStream value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.BLOB);
-		} else {
-			setBlob(parameterName, value);
-		}
-	}
-
-	public void setBinaryStream2(String parameterName, java.io.InputStream value) throws java.sql.SQLException {
-		if (value == null) {
-			setNull(parameterName, Types.LONGVARBINARY);
-		} else {
-			setBinaryStream(parameterName, value);
 		}
 	}
 
