@@ -49,4 +49,34 @@ public abstract class TaskMutexService<K> extends MutexService<K> {
 			}
 		});
 	}
+
+	public void execute(final K mutexKey, final Runnable task) throws Exception {
+		this.initialize();
+		AssertUtils.assertNotNull(mutexKey);
+
+		this.getExecutorService().submit(new Runnable() {
+
+			@Override
+			public void run() {
+				synchronized (getMutex(mutexKey)) {
+					task.run();
+				}
+			}
+		});
+	}
+
+	public <V> Future<V> execute(final K mutexKey, final Runnable task, V result) throws Exception {
+		this.initialize();
+		AssertUtils.assertNotNull(mutexKey);
+
+		return this.getExecutorService().submit(new Runnable() {
+
+			@Override
+			public void run() {
+				synchronized (getMutex(mutexKey)) {
+					task.run();
+				}
+			}
+		}, result);
+	}
 }
