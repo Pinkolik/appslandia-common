@@ -45,14 +45,14 @@ public class URLEncoding {
 		// The space character " " is converted into a plus sign "+".
 
 		// @formatter:off
-		URL_PARAM_NOT_ENCODED = new BitArray(256)
+		URL_PARAM_NOT_ENCODED = new BitMap(256)
 				.b1("a-zA-Z0-9")
 				.b1('-', '.', '_', '*')
 				.b1(' ');
 		// @formatter:on
 	}
 
-	static final BitSet URL_PARAM_NOT_ENCODED_SP = new BitArray(URL_PARAM_NOT_ENCODED).b0(' ');
+	static final BitSet URL_PARAM_NOT_ENCODED_SP = new BitMap(URL_PARAM_NOT_ENCODED).b0(' ');
 
 	static final BitSet URL_PATH_NOT_ENCODED;
 
@@ -62,7 +62,7 @@ public class URLEncoding {
 		// sub-delims = "!", "$", "&", "'", "(", ")", "*", "+", ",", ";", "="
 
 		// @formatter:off
-		URL_PATH_NOT_ENCODED = new BitArray(256)
+		URL_PATH_NOT_ENCODED = new BitMap(256)
 				.b1("a-zA-Z0-9")
 				.b1('-', '.', '_', '~')
 				.b1(':', '@')

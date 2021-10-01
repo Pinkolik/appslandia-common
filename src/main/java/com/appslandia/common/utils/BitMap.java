@@ -27,65 +27,65 @@ import java.util.BitSet;
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class BitArray extends BitSet {
+public class BitMap extends BitSet {
 	private static final long serialVersionUID = 1L;
 
-	public BitArray() {
+	public BitMap() {
 	}
 
-	public BitArray(int bits) {
+	public BitMap(int bits) {
 		super(bits);
 	}
 
-	public BitArray(BitSet bitSet) {
+	public BitMap(BitSet bitSet) {
 		super(bitSet.size());
 		or(bitSet);
 	}
 
-	public BitArray b1(int... indexes) {
+	public BitMap b1(int... indexes) {
 		for (int index : indexes) {
 			set(index);
 		}
 		return this;
 	}
 
-	public BitArray b1(String indexRanges) {
+	public BitMap b1(String indexRanges) {
 		for (char chr : CharUtils.toCharRanges(indexRanges)) {
 			set(chr);
 		}
 		return this;
 	}
 
-	public BitArray b0(int... indexes) {
+	public BitMap b0(int... indexes) {
 		for (int index : indexes) {
 			clear(index);
 		}
 		return this;
 	}
 
-	public BitArray b0(String indexRanges) {
+	public BitMap b0(String indexRanges) {
 		for (char chr : CharUtils.toCharRanges(indexRanges)) {
 			clear(chr);
 		}
 		return this;
 	}
 
-	public BitArray tgl(int... indexes) {
+	public BitMap tgl(int... indexes) {
 		for (int index : indexes) {
 			flip(index);
 		}
 		return this;
 	}
 
-	public BitArray tgl(String indexRanges) {
+	public BitMap tgl(String indexRanges) {
 		for (char chr : CharUtils.toCharRanges(indexRanges)) {
 			flip(chr);
 		}
 		return this;
 	}
 
-	public BitArray copy() {
-		BitArray impl = new BitArray(this.size());
+	public BitMap copy() {
+		BitMap impl = new BitMap(this.size());
 		impl.or(this);
 		return impl;
 	}

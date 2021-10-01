@@ -28,12 +28,12 @@ import org.junit.Test;
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class BitArrayTest {
+public class BitMapTest {
 
 	@Test
 	public void test() {
 
-		BitArray bits = new BitArray();
+		BitMap bits = new BitMap();
 		bits.b1(1, 3, 5);
 		bits.b0(0, 2, 4);
 
@@ -52,7 +52,7 @@ public class BitArrayTest {
 	@Test
 	public void test_tgl() {
 
-		BitArray bits = new BitArray();
+		BitMap bits = new BitMap();
 		bits.b1(1, 3, 5);
 
 		bits.tgl(1, 3, 5);
@@ -65,10 +65,10 @@ public class BitArrayTest {
 	@Test
 	public void test_ctor() {
 
-		BitArray bits = new BitArray();
+		BitMap bits = new BitMap();
 		bits.b1(1, 3, 5);
 
-		BitArray copy = new BitArray(bits);
+		BitMap copy = new BitMap(bits);
 		Assert.assertEquals(bits, copy);
 	}
 }
