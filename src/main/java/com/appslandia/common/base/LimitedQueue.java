@@ -31,12 +31,12 @@ import java.util.Queue;
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
  *
  */
-public class FixedQueue<E> implements Queue<E>, Iterable<E> {
+public class LimitedQueue<E> implements Queue<E>, Iterable<E> {
 
 	private final int size;
 	private final Queue<E> queue = new LinkedList<E>();
 
-	public FixedQueue(int size) {
+	public LimitedQueue(int size) {
 		this.size = size;
 	}
 
