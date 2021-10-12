@@ -385,6 +385,27 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
+	public <T> T executeScalar(String sql) throws java.sql.SQLException {
+		this.assertNotClosed();
+
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				Object t = null;
+				boolean rsRead = false;
+
+				while (rs.next()) {
+					if (rsRead) {
+						throw new NonUniqueSqlException();
+					}
+					rsRead = true;
+					t = rs.getObject(1);
+				}
+				return ObjectUtils.cast(t);
+			}
+		}
+	}
+
 	public void executeBatch() throws SQLException {
 		this.assertNotClosed();
 		AssertUtils.assertTrue(!this.conn.getAutoCommit());
