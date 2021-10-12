@@ -188,6 +188,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
+
 			while (rs.next()) {
 				handler.handle(rs);
 			}
