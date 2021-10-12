@@ -24,10 +24,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,33 +69,19 @@ public class DbManager implements AutoCloseable {
 		return this.conn;
 	}
 
-	protected Object toSqlObject(Object val, int sqlType) {
-		if (val == null) {
-			return null;
-		}
-		if (Date.class.isAssignableFrom(val.getClass())) {
-			if ((val.getClass() == java.sql.Date.class) || (val.getClass() == java.sql.Time.class) || (val.getClass() == java.sql.Timestamp.class)) {
-				return val;
-			}
-			if (sqlType == Types.TIME) {
-				return new java.sql.Time(((Date) val).getTime());
-			}
-			if (sqlType == Types.TIMESTAMP) {
-				return new java.sql.Timestamp(((Date) val).getTime());
-			}
-			return new java.sql.Date(((Date) val).getTime());
-		}
-		return val;
-	}
-
 	protected void setParameter(StatementImpl stat, String parameterName, Object val, int sqlType) throws SQLException {
-		if (val != null) {
-			stat.setObject(parameterName, val);
-		} else {
+		if (val == null) {
 			if (sqlType > 0) {
 				stat.setNull(parameterName, sqlType);
 			} else {
 				stat.setObject(parameterName, null);
+			}
+		} else {
+
+			if (sqlType > 0) {
+				stat.setObject(parameterName, val, sqlType);
+			} else {
+				stat.setObject(parameterName, val);
 			}
 		}
 	}
@@ -131,7 +115,6 @@ public class DbManager implements AutoCloseable {
 			if (!field.isAutoKey()) {
 
 				Object val = record.get(field.getName());
-				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(stats.insertStat, field.getName(), val, field.getSqlType());
 			}
 		}
@@ -175,7 +158,6 @@ public class DbManager implements AutoCloseable {
 			if (field.isKey() || field.isUpdatable()) {
 
 				Object val = record.get(field.getName());
-				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(stats.updateStat, field.getName(), val, field.getSqlType());
 			}
 		}
@@ -208,7 +190,6 @@ public class DbManager implements AutoCloseable {
 			if (field.isKey()) {
 
 				Object val = key.get(field.getName());
-				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(stats.deleteStat, field.getName(), val, field.getSqlType());
 			}
 		}
@@ -233,7 +214,6 @@ public class DbManager implements AutoCloseable {
 			if (field.isKey()) {
 
 				Object val = key.get(field.getName());
-				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(stats.getStat, field.getName(), val, field.getSqlType());
 			}
 		}
@@ -254,7 +234,6 @@ public class DbManager implements AutoCloseable {
 			if (field.isKey()) {
 
 				Object val = key.get(field.getName());
-				val = this.toSqlObject(val, field.getSqlType());
 				setParameter(stats.existsStat, field.getName(), val, field.getSqlType());
 			}
 		}
