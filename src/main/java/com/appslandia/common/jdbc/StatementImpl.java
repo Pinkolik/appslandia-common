@@ -186,6 +186,14 @@ public class StatementImpl implements PreparedStatement {
 		}
 	}
 
+	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {
+		try (ResultSetImpl rs = this.executeQuery()) {
+			while (rs.next()) {
+				handler.handle(rs);
+			}
+		}
+	}
+
 	public int executeCount() throws java.sql.SQLException {
 		long count = executeCountLong();
 
@@ -206,14 +214,6 @@ public class StatementImpl implements PreparedStatement {
 				count = rs.getLong(1);
 			}
 			return count;
-		}
-	}
-
-	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {
-		try (ResultSetImpl rs = this.executeQuery()) {
-			while (rs.next()) {
-				handler.handle(rs);
-			}
 		}
 	}
 
