@@ -171,19 +171,7 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public <T> T executeScalar() throws java.sql.SQLException {
-		try (ResultSet rs = this.stat.executeQuery()) {
-			Object t = null;
-			boolean rsRead = false;
-
-			while (rs.next()) {
-				if (rsRead) {
-					throw new NonUniqueSqlException();
-				}
-				rsRead = true;
-				t = rs.getObject(1);
-			}
-			return ObjectUtils.cast(t);
-		}
+		return executeSingle(rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
 	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {

@@ -448,24 +448,7 @@ public class DbManager implements AutoCloseable {
 	}
 
 	public <T> T executeScalar(String sql) throws SQLException {
-		this.assertNotClosed();
-
-		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSet rs = stat.executeQuery(sql)) {
-
-				Object t = null;
-				boolean rsRead = false;
-
-				while (rs.next()) {
-					if (rsRead) {
-						throw new NonUniqueSqlException();
-					}
-					rsRead = true;
-					t = rs.getObject(1);
-				}
-				return ObjectUtils.cast(t);
-			}
-		}
+		return executeSingle(sql, rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
 	public void executeQuery(String sql, ResultSetHandler handler) throws SQLException {
