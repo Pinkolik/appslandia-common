@@ -36,6 +36,7 @@ import com.appslandia.common.jdbc.NonUniqueSqlException;
 import com.appslandia.common.jdbc.ResultSetHandler;
 import com.appslandia.common.jdbc.ResultSetImpl;
 import com.appslandia.common.jdbc.ResultSetMapper;
+import com.appslandia.common.jdbc.Sql;
 import com.appslandia.common.jdbc.StatementImpl;
 import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.ObjectUtils;
@@ -83,6 +84,12 @@ public class DbManager implements AutoCloseable {
 			} else {
 				stat.setObject(parameterName, val);
 			}
+		}
+	}
+
+	protected void setParameter(StatementImpl stat, Map<String, Object> params) throws SQLException {
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			stat.setObject(param.getKey(), param.getValue());
 		}
 	}
 
@@ -303,6 +310,33 @@ public class DbManager implements AutoCloseable {
 		return map;
 	}
 
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper)
+			throws SQLException {
+		return executeMap(sql, params, keyMapper, valueMapper, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
+			throws SQLException {
+		this.assertNotClosed();
+
+		final Sql cmd = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, cmd)) {
+			setParameter(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
+
+				while (rs.next()) {
+
+					K k = keyMapper.map(rs);
+					V v = valueMapper.map(rs);
+					map.put(k, v);
+				}
+			}
+		}
+		return map;
+	}
+
 	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn) throws SQLException {
 		return executeMap(sql, keyColumn, valueColumn, new LinkedHashMap<>());
 	}
@@ -312,6 +346,31 @@ public class DbManager implements AutoCloseable {
 
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSet rs = stat.executeQuery(sql)) {
+
+				while (rs.next()) {
+
+					K k = ObjectUtils.cast(rs.getObject(keyColumn));
+					V v = ObjectUtils.cast(rs.getObject(valueColumn));
+					map.put(k, v);
+				}
+			}
+		}
+		return map;
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn) throws SQLException {
+		return executeMap(sql, params, keyColumn, valueColumn, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
+		this.assertNotClosed();
+
+		final Sql cmd = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, cmd)) {
+			setParameter(stat, params);
+
+			try (ResultSet rs = stat.executeQuery()) {
 
 				while (rs.next()) {
 
@@ -334,6 +393,29 @@ public class DbManager implements AutoCloseable {
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
+				while (rs.next()) {
+
+					T t = mapper.map(rs);
+					list.add(t);
+				}
+			}
+		}
+		return list;
+	}
+
+	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
+		return executeList(sql, params, mapper, new ArrayList<>());
+	}
+
+	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
+		this.assertNotClosed();
+
+		final Sql cmd = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, cmd)) {
+			setParameter(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
 				while (rs.next()) {
 
 					T t = mapper.map(rs);
