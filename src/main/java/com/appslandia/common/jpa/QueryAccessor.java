@@ -27,7 +27,6 @@ import javax.persistence.Query;
 
 import com.appslandia.common.jdbc.LikeType;
 import com.appslandia.common.jdbc.SqlLikeEscaper;
-import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.ObjectUtils;
 import com.appslandia.common.utils.TagUtils;
 
@@ -42,24 +41,6 @@ public class QueryAccessor implements Query {
 
 	public QueryAccessor(Query q) {
 		this.q = q;
-	}
-
-	public int getCount() {
-		long count = getCountLong();
-		if (count > Integer.MAX_VALUE) {
-			throw new ArithmeticException("getCount() is out of int range.");
-		}
-		return (int) count;
-	}
-
-	public long getCountLong() {
-		Number count = (Number) this.q.getSingleResult();
-		AssertUtils.assertNotNull(count);
-		return count.longValue();
-	}
-
-	public boolean hasCount() {
-		return getCountLong() > 0;
 	}
 
 	public <T> T getFirstOrNull() {

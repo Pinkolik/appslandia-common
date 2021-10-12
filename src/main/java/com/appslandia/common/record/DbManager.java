@@ -32,7 +32,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import com.appslandia.common.jdbc.NonUniqueSqlException;
+import com.appslandia.common.jdbc.JdbcUtils;
 import com.appslandia.common.jdbc.ResultSetHandler;
 import com.appslandia.common.jdbc.ResultSetImpl;
 import com.appslandia.common.jdbc.ResultSetMapper;
@@ -223,7 +223,7 @@ public class DbManager implements AutoCloseable {
 				setParameter(stats.getStat, field.getName(), val, field.getSqlType());
 			}
 		}
-		try (ResultSet rs = stats.getStat.executeQuery()) {
+		try (ResultSetImpl rs = stats.getStat.executeQuery()) {
 			return RecordUtils.executeSingle(rs);
 		}
 	}
@@ -243,8 +243,8 @@ public class DbManager implements AutoCloseable {
 				setParameter(stats.existsStat, field.getName(), val, field.getSqlType());
 			}
 		}
-		long count = stats.existsStat.executeCountLong();
-		return count == 1;
+		Long count = stats.existsStat.executeScalar();
+		return (count != null) && (count == 1);
 	}
 
 	public List<Record> getAll(Table table) throws SQLException {
@@ -298,15 +298,9 @@ public class DbManager implements AutoCloseable {
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
-				while (rs.next()) {
-
-					K k = keyMapper.map(rs);
-					V v = valueMapper.map(rs);
-					map.put(k, v);
-				}
+				return JdbcUtils.executeMap(rs, keyMapper, valueMapper, map);
 			}
 		}
-		return map;
 	}
 
 	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper)
@@ -324,15 +318,9 @@ public class DbManager implements AutoCloseable {
 			setParameter(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
-				while (rs.next()) {
-
-					K k = keyMapper.map(rs);
-					V v = valueMapper.map(rs);
-					map.put(k, v);
-				}
+				return JdbcUtils.executeMap(rs, keyMapper, valueMapper, map);
 			}
 		}
-		return map;
 	}
 
 	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn) throws SQLException {
@@ -344,16 +332,10 @@ public class DbManager implements AutoCloseable {
 
 		try (Statement stat = this.conn.createStatement()) {
 
-			try (ResultSet rs = stat.executeQuery(sql)) {
-				while (rs.next()) {
-
-					K k = ObjectUtils.cast(rs.getObject(keyColumn));
-					V v = ObjectUtils.cast(rs.getObject(valueColumn));
-					map.put(k, v);
-				}
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+				return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
 			}
 		}
-		return map;
 	}
 
 	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn) throws SQLException {
@@ -368,16 +350,10 @@ public class DbManager implements AutoCloseable {
 		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
 			setParameter(stat, params);
 
-			try (ResultSet rs = stat.executeQuery()) {
-				while (rs.next()) {
-
-					K k = ObjectUtils.cast(rs.getObject(keyColumn));
-					V v = ObjectUtils.cast(rs.getObject(valueColumn));
-					map.put(k, v);
-				}
+			try (ResultSetImpl rs = stat.executeQuery()) {
+				return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
 			}
 		}
-		return map;
 	}
 
 	public <T> List<T> executeList(String sql, ResultSetMapper<T> mapper) throws SQLException {
@@ -390,14 +366,9 @@ public class DbManager implements AutoCloseable {
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
-				while (rs.next()) {
-
-					T t = mapper.map(rs);
-					list.add(t);
-				}
+				return JdbcUtils.executeList(rs, mapper, list);
 			}
 		}
-		return list;
 	}
 
 	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
@@ -413,14 +384,9 @@ public class DbManager implements AutoCloseable {
 			setParameter(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
-				while (rs.next()) {
-
-					T t = mapper.map(rs);
-					list.add(t);
-				}
+				return JdbcUtils.executeList(rs, mapper, list);
 			}
 		}
-		return list;
 	}
 
 	public <T> T executeSingle(String sql, ResultSetMapper<T> mapper) throws SQLException {
@@ -429,17 +395,7 @@ public class DbManager implements AutoCloseable {
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
-				T t = null;
-				boolean rsRead = false;
-
-				while (rs.next()) {
-					if (rsRead) {
-						throw new NonUniqueSqlException();
-					}
-					rsRead = true;
-					t = mapper.map(rs);
-				}
-				return t;
+				return JdbcUtils.executeSingle(rs, mapper);
 			}
 		}
 	}

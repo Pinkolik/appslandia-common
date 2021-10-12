@@ -28,8 +28,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.appslandia.common.utils.AssertUtils;
+import com.appslandia.common.utils.ObjectUtils;
 import com.appslandia.common.utils.StringFormat;
 
 /**
@@ -58,6 +60,51 @@ public class JdbcUtils {
 			} catch (Exception ignore) {
 			}
 		}
+	}
+
+	public static <T> T executeSingle(ResultSetImpl rs, ResultSetMapper<T> mapper) throws SQLException {
+		T t = null;
+		boolean rsRead = false;
+
+		while (rs.next()) {
+			if (rsRead) {
+				throw new NonUniqueSqlException();
+			}
+			rsRead = true;
+			t = mapper.map(rs);
+		}
+		return t;
+	}
+
+	public static <T> List<T> executeList(ResultSetImpl rs, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
+		while (rs.next()) {
+			T t = mapper.map(rs);
+			list.add(t);
+		}
+		return list;
+	}
+
+	public static <K, V> Map<K, V> executeMap(ResultSetImpl rs, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
+		while (rs.next()) {
+
+			K k = ObjectUtils.cast(rs.getObject(keyColumn));
+			V v = ObjectUtils.cast(rs.getObject(valueColumn));
+
+			map.put(k, v);
+		}
+		return map;
+	}
+
+	public static <K, V> Map<K, V> executeMap(ResultSetImpl rs, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
+			throws SQLException {
+		while (rs.next()) {
+
+			K k = keyMapper.map(rs);
+			V v = valueMapper.map(rs);
+
+			map.put(k, v);
+		}
+		return map;
 	}
 
 	public static String[] getColumnLabels(ResultSet rs) throws SQLException {

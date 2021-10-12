@@ -113,14 +113,8 @@ public class StatementImpl implements PreparedStatement {
 
 	public <K, V> Map<K, V> executeMap(ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
-			while (rs.next()) {
-
-				K k = keyMapper.map(rs);
-				V v = valueMapper.map(rs);
-				map.put(k, v);
-			}
+			return JdbcUtils.executeMap(rs, keyMapper, valueMapper, map);
 		}
-		return map;
 	}
 
 	public <K, V> Map<K, V> executeMap(String keyColumn, String valueColumn) throws java.sql.SQLException {
@@ -128,15 +122,9 @@ public class StatementImpl implements PreparedStatement {
 	}
 
 	public <K, V> Map<K, V> executeMap(String keyColumn, String valueColumn, Map<K, V> map) throws java.sql.SQLException {
-		try (ResultSet rs = this.stat.executeQuery()) {
-			while (rs.next()) {
-
-				K k = ObjectUtils.cast(rs.getObject(keyColumn));
-				V v = ObjectUtils.cast(rs.getObject(valueColumn));
-				map.put(k, v);
-			}
+		try (ResultSetImpl rs = this.executeQuery()) {
+			return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
 		}
-		return map;
 	}
 
 	public <T> List<T> executeList(ResultSetMapper<T> mapper) throws java.sql.SQLException {
@@ -146,27 +134,13 @@ public class StatementImpl implements PreparedStatement {
 	public <T> List<T> executeList(ResultSetMapper<T> mapper, List<T> list) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
 
-			while (rs.next()) {
-				T t = mapper.map(rs);
-				list.add(t);
-			}
+			return JdbcUtils.executeList(rs, mapper, list);
 		}
-		return list;
 	}
 
 	public <T> T executeSingle(ResultSetMapper<T> mapper) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
-			T t = null;
-			boolean rsRead = false;
-
-			while (rs.next()) {
-				if (rsRead) {
-					throw new NonUniqueSqlException();
-				}
-				rsRead = true;
-				t = mapper.map(rs);
-			}
-			return t;
+			return JdbcUtils.executeSingle(rs, mapper);
 		}
 	}
 
@@ -180,29 +154,6 @@ public class StatementImpl implements PreparedStatement {
 			while (rs.next()) {
 				handler.handle(rs);
 			}
-		}
-	}
-
-	public int executeCount() throws java.sql.SQLException {
-		long count = executeCountLong();
-
-		if (count > Integer.MAX_VALUE) {
-			throw new ArithmeticException("executeCount() is out of range.");
-		}
-		return (int) count;
-	}
-
-	public long executeCountLong() throws java.sql.SQLException {
-		try (ResultSet rs = this.stat.executeQuery()) {
-			long count = -1;
-
-			while (rs.next()) {
-				if (count >= 0) {
-					throw new NonUniqueSqlException();
-				}
-				count = rs.getLong(1);
-			}
-			return count;
 		}
 	}
 
