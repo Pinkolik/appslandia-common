@@ -324,7 +324,6 @@ public class DbManager implements AutoCloseable {
 			setParameter(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
-
 				while (rs.next()) {
 
 					K k = keyMapper.map(rs);
