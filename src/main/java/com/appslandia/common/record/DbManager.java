@@ -78,7 +78,6 @@ public class DbManager implements AutoCloseable {
 				stat.setObject(parameterName, null);
 			}
 		} else {
-
 			if (sqlType > 0) {
 				stat.setObject(parameterName, val, sqlType);
 			} else {
@@ -319,9 +318,9 @@ public class DbManager implements AutoCloseable {
 			throws SQLException {
 		this.assertNotClosed();
 
-		final Sql cmd = new Sql(sql);
+		final Sql pSql = new Sql(sql);
 
-		try (StatementImpl stat = new StatementImpl(this.conn, cmd)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
 			setParameter(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
@@ -345,8 +344,8 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSet rs = stat.executeQuery(sql)) {
 
+			try (ResultSet rs = stat.executeQuery(sql)) {
 				while (rs.next()) {
 
 					K k = ObjectUtils.cast(rs.getObject(keyColumn));
@@ -365,13 +364,12 @@ public class DbManager implements AutoCloseable {
 	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql cmd = new Sql(sql);
+		final Sql pSql = new Sql(sql);
 
-		try (StatementImpl stat = new StatementImpl(this.conn, cmd)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
 			setParameter(stat, params);
 
 			try (ResultSet rs = stat.executeQuery()) {
-
 				while (rs.next()) {
 
 					K k = ObjectUtils.cast(rs.getObject(keyColumn));
@@ -410,9 +408,9 @@ public class DbManager implements AutoCloseable {
 	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql cmd = new Sql(sql);
+		final Sql pSql = new Sql(sql);
 
-		try (StatementImpl stat = new StatementImpl(this.conn, cmd)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
 			setParameter(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
