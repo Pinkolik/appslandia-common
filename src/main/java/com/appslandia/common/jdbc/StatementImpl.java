@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,40 +107,51 @@ public class StatementImpl implements PreparedStatement {
 
 	// Execute Results
 
-	public <K, V> Map<K, V> executeMap(ResultSetMapper<K> key, ResultSetMapper<V> value, Map<K, V> newMap) throws java.sql.SQLException {
+	public <K, V> Map<K, V> executeMap(ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper) throws java.sql.SQLException {
+		return executeMap(keyMapper, valueMapper, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
 			while (rs.next()) {
 
-				K k = key.map(rs);
-				V v = value.map(rs);
-				newMap.put(k, v);
+				K k = keyMapper.map(rs);
+				V v = valueMapper.map(rs);
+				map.put(k, v);
 			}
-			return newMap;
 		}
+		return map;
 	}
 
-	public <K, V> Map<K, V> executeMap(String keyColumn, String valueColumn, Map<K, V> newMap) throws java.sql.SQLException {
+	public <K, V> Map<K, V> executeMap(String keyColumn, String valueColumn) throws java.sql.SQLException {
+		return executeMap(keyColumn, valueColumn, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String keyColumn, String valueColumn, Map<K, V> map) throws java.sql.SQLException {
 		try (ResultSet rs = this.stat.executeQuery()) {
 			while (rs.next()) {
 
 				K k = ObjectUtils.cast(rs.getObject(keyColumn));
 				V v = ObjectUtils.cast(rs.getObject(valueColumn));
-				newMap.put(k, v);
+				map.put(k, v);
 			}
-			return newMap;
 		}
+		return map;
 	}
 
 	public <T> List<T> executeList(ResultSetMapper<T> mapper) throws java.sql.SQLException {
+		return executeList(mapper, new ArrayList<>());
+	}
+
+	public <T> List<T> executeList(ResultSetMapper<T> mapper, List<T> list) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
-			List<T> list = new ArrayList<>();
 
 			while (rs.next()) {
 				T t = mapper.map(rs);
 				list.add(t);
 			}
-			return list;
 		}
+		return list;
 	}
 
 	public <T> T executeSingle(ResultSetMapper<T> mapper) throws java.sql.SQLException {
