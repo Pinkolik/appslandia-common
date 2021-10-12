@@ -71,7 +71,7 @@ public class Field implements Serializable {
 	}
 
 	public int getSqlType() {
-		return sqlType;
+		return this.sqlType;
 	}
 
 	public Field setSqlType(int sqlType) {
