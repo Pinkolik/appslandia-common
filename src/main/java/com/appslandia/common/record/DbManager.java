@@ -245,8 +245,8 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-
 			try (ResultSet rs = stat.executeQuery(table.getGetAllSql())) {
+
 				return RecordUtils.executeList(rs);
 			}
 		}
@@ -256,8 +256,8 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-
 			try (ResultSet rs = stat.executeQuery(sql)) {
+
 				return RecordUtils.executeList(rs);
 			}
 		}
@@ -267,8 +267,8 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-
 			try (ResultSet rs = stat.executeQuery(sql)) {
+
 				return RecordUtils.executeSingle(rs);
 			}
 		}
