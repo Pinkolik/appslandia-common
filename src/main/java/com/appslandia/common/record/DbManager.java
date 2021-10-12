@@ -35,6 +35,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import com.appslandia.common.jdbc.NonUniqueSqlException;
+import com.appslandia.common.jdbc.ResultSetHandler;
 import com.appslandia.common.jdbc.ResultSetImpl;
 import com.appslandia.common.jdbc.ResultSetMapper;
 import com.appslandia.common.jdbc.StatementImpl;
@@ -385,11 +386,11 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public <T> T executeScalar(String sql) throws java.sql.SQLException {
+	public <T> T executeScalar(String sql) throws SQLException {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+			try (ResultSet rs = stat.executeQuery(sql)) {
 
 				Object t = null;
 				boolean rsRead = false;
@@ -402,6 +403,19 @@ public class DbManager implements AutoCloseable {
 					t = rs.getObject(1);
 				}
 				return ObjectUtils.cast(t);
+			}
+		}
+	}
+
+	public void executeQuery(String sql, ResultSetHandler handler) throws SQLException {
+		this.assertNotClosed();
+
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				while (rs.next()) {
+					handler.handle(rs);
+				}
 			}
 		}
 	}
