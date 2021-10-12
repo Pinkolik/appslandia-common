@@ -172,7 +172,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public <T> T executeScalar() throws java.sql.SQLException {
 		try (ResultSet rs = this.stat.executeQuery()) {
-			Object obj = null;
+			Object t = null;
 			boolean rsRead = false;
 
 			while (rs.next()) {
@@ -180,9 +180,9 @@ public class StatementImpl implements PreparedStatement {
 					throw new NonUniqueSqlException();
 				}
 				rsRead = true;
-				obj = rs.getObject(1);
+				t = rs.getObject(1);
 			}
-			return ObjectUtils.cast(obj);
+			return ObjectUtils.cast(t);
 		}
 	}
 
