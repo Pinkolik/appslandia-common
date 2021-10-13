@@ -44,7 +44,7 @@ public class QueryAccessor implements Query {
 	}
 
 	public <T> T getFirstOrNull() {
-		List<T> results = setMaxResults(1).getList();
+		List<T> results = setMaxResults(1).getTypedList();
 		return !results.isEmpty() ? results.get(0) : null;
 	}
 
@@ -56,7 +56,7 @@ public class QueryAccessor implements Query {
 		}
 	}
 
-	public <T> List<T> getList() {
+	public <T> List<T> getTypedList() {
 		return ObjectUtils.cast(getResultList());
 	}
 
