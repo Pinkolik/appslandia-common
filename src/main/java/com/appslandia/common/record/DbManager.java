@@ -134,6 +134,7 @@ public class DbManager implements AutoCloseable {
 
 					if (rs.next()) {
 						Object generatedKey = rs.getObject(1);
+
 						record.set(table.getAutoKey().getName(), ((Number) generatedKey).longValue());
 						return record.get(table.getAutoKey().getName());
 					}
@@ -228,7 +229,6 @@ public class DbManager implements AutoCloseable {
 		}
 		try (ResultSetImpl rs = stats.getStat.executeQuery()) {
 			final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
-
 			return JdbcUtils.executeSingle(rs, r -> RecordUtils.toRecord(r, columnLabels));
 		}
 	}
@@ -248,6 +248,7 @@ public class DbManager implements AutoCloseable {
 				setParameter(stats.existsStat, field.getName(), val, field.getSqlType());
 			}
 		}
+
 		Long count = stats.existsStat.executeScalar();
 		return (count != null) && (count == 1);
 	}
@@ -257,8 +258,8 @@ public class DbManager implements AutoCloseable {
 
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(table.getGetAllSql()))) {
-				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 
+				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 				return JdbcUtils.executeList(rs, r -> RecordUtils.toRecord(r, columnLabels), new ArrayList<>());
 			}
 		}
@@ -271,7 +272,6 @@ public class DbManager implements AutoCloseable {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
 				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
-
 				return JdbcUtils.executeList(rs, r -> RecordUtils.toRecord(r, columnLabels), new ArrayList<>());
 			}
 		}
@@ -284,7 +284,6 @@ public class DbManager implements AutoCloseable {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
 				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
-
 				return JdbcUtils.executeSingle(rs, r -> RecordUtils.toRecord(r, columnLabels));
 			}
 		}
@@ -341,8 +340,8 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
 				return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
 			}
 		}
