@@ -90,7 +90,7 @@ public class StatementImpl implements PreparedStatement {
 		long seq = executeGeneratedKeyLong();
 
 		if (seq > Integer.MAX_VALUE) {
-			throw new ArithmeticException("executeGeneratedKey() is out of range.");
+			throw new ArithmeticException("executeGeneratedKey");
 		}
 		return (int) seq;
 	}
