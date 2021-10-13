@@ -251,11 +251,11 @@ public class DbManager implements AutoCloseable {
 			}
 		}
 
-		Long count = stats.existsStat.executeScalar();
+		Number count = stats.existsStat.executeScalar();
 		if (count == null) {
 			return false;
 		}
-		if (count > 1) {
+		if (count.longValue() > 1) {
 			throw new IllegalStateException("Duplicate key");
 		}
 		return true;
