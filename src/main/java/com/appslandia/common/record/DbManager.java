@@ -101,7 +101,7 @@ public class DbManager implements AutoCloseable {
 		return stats;
 	}
 
-	public long insert(Record record, Table table) throws SQLException {
+	public Object insert(Record record, Table table) throws SQLException {
 		return this.insert(record, table, false);
 	}
 
@@ -109,7 +109,7 @@ public class DbManager implements AutoCloseable {
 		this.insert(record, table, true);
 	}
 
-	protected long insert(Record record, Table table, boolean addBatch) throws SQLException {
+	protected Object insert(Record record, Table table, boolean addBatch) throws SQLException {
 		this.assertNotClosed();
 
 		Statements stats = getStatements(table.getName());
@@ -134,8 +134,8 @@ public class DbManager implements AutoCloseable {
 
 					if (rs.next()) {
 						Object generatedKey = rs.getObject(1);
+						record.set(table.getAutoKey().getName(), generatedKey);
 
-						record.set(table.getAutoKey().getName(), ((Number) generatedKey).longValue());
 						return record.get(table.getAutoKey().getName());
 					}
 				}
