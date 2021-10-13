@@ -128,6 +128,7 @@ public class DbManager implements AutoCloseable {
 		int rowAffected = -1;
 		if (!addBatch) {
 			rowAffected = stats.insertStat.executeUpdate();
+
 			if (table.getAutoKey() != null) {
 				try (ResultSet rs = stats.insertStat.getGeneratedKeys()) {
 
@@ -168,6 +169,7 @@ public class DbManager implements AutoCloseable {
 			}
 		}
 		int rowAffected = -1;
+
 		if (!addBatch) {
 			rowAffected = stats.updateStat.executeUpdate();
 		} else {
@@ -200,6 +202,7 @@ public class DbManager implements AutoCloseable {
 			}
 		}
 		int rowAffected = -1;
+
 		if (!addBatch) {
 			rowAffected = stats.deleteStat.executeUpdate();
 		} else {
@@ -224,7 +227,9 @@ public class DbManager implements AutoCloseable {
 			}
 		}
 		try (ResultSetImpl rs = stats.getStat.executeQuery()) {
-			return RecordUtils.executeSingle(rs);
+			final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
+
+			return JdbcUtils.executeSingle(rs, r -> RecordUtils.toRecord(r, columnLabels));
 		}
 	}
 
@@ -251,9 +256,10 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSet rs = stat.executeQuery(table.getGetAllSql())) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(table.getGetAllSql()))) {
+				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 
-				return RecordUtils.executeList(rs);
+				return JdbcUtils.executeList(rs, r -> RecordUtils.toRecord(r, columnLabels), new ArrayList<>());
 			}
 		}
 	}
@@ -262,9 +268,11 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSet rs = stat.executeQuery(sql)) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
-				return RecordUtils.executeList(rs);
+				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
+
+				return JdbcUtils.executeList(rs, r -> RecordUtils.toRecord(r, columnLabels), new ArrayList<>());
 			}
 		}
 	}
@@ -273,9 +281,11 @@ public class DbManager implements AutoCloseable {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSet rs = stat.executeQuery(sql)) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
-				return RecordUtils.executeSingle(rs);
+				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
+
+				return JdbcUtils.executeSingle(rs, r -> RecordUtils.toRecord(r, columnLabels));
 			}
 		}
 	}

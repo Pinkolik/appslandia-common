@@ -133,7 +133,6 @@ public class StatementImpl implements PreparedStatement {
 
 	public <T> List<T> executeList(ResultSetMapper<T> mapper, List<T> list) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
-
 			return JdbcUtils.executeList(rs, mapper, list);
 		}
 	}
@@ -150,7 +149,6 @@ public class StatementImpl implements PreparedStatement {
 
 	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {
 		try (ResultSetImpl rs = this.executeQuery()) {
-
 			while (rs.next()) {
 				handler.handle(rs);
 			}
@@ -267,7 +265,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setLikeAny(String parameterName, String[] values, LikeType likeType, String falsePattern) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setString(Sql.toParamName(parameterName, i), (i < values.length) ? SqlLikeEscaper.toLikePattern(values[i], likeType) : falsePattern);
@@ -288,7 +286,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setNLikeAny(String parameterName, String[] values, LikeType likeType, String falsePattern) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setNString(Sql.toParamName(parameterName, i), (i < values.length) ? SqlLikeEscaper.toLikePattern(values[i], likeType) : falsePattern);
@@ -300,7 +298,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setStringArray(String parameterName, String[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setString(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
@@ -309,7 +307,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setNStringArray(String parameterName, String[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setNString(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
@@ -318,7 +316,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setByteArray(String parameterName, byte[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			if (i < values.length) {
@@ -331,7 +329,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setShortArray(String parameterName, short[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			if (i < values.length) {
@@ -344,7 +342,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setIntArray(String parameterName, int[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			if (i < values.length) {
@@ -357,7 +355,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setLongArray(String parameterName, long[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			if (i < values.length) {
@@ -370,7 +368,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setFloatArray(String parameterName, float[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			if (i < values.length) {
@@ -383,7 +381,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setDoubleArray(String parameterName, double[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			if (i < values.length) {
@@ -396,7 +394,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setBigDecimalArray(String parameterName, java.math.BigDecimal[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setBigDecimal(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
@@ -405,7 +403,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setDateArray(String parameterName, java.sql.Date[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setDate(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
@@ -414,7 +412,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setTimestampArray(String parameterName, java.sql.Timestamp[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setTimestamp(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
@@ -423,7 +421,7 @@ public class StatementImpl implements PreparedStatement {
 
 	public void setTimeArray(String parameterName, java.sql.Time[] values) throws java.sql.SQLException {
 		int arrayLen = this.getSql().getArrayLen(parameterName);
-		AssertUtils.assertTrue(values.length <= arrayLen, "values is too long.");
+		AssertUtils.assertTrue(values.length <= arrayLen);
 
 		for (int i = 0; i < arrayLen; i++) {
 			setTime(Sql.toParamName(parameterName, i), (i < values.length) ? values[i] : null);
