@@ -256,7 +256,7 @@ public class DbManager implements AutoCloseable {
 			return false;
 		}
 		if (count.longValue() > 1) {
-			throw new IllegalStateException("Duplicate key");
+			throw new IllegalStateException("Duplicate key.");
 		}
 		return true;
 	}
@@ -438,7 +438,7 @@ public class DbManager implements AutoCloseable {
 
 	public void executeBatch() throws SQLException {
 		this.assertNotClosed();
-		AssertUtils.assertTrue(!this.conn.getAutoCommit());
+		AssertUtils.assertState(!this.conn.getAutoCommit(), "No transaction.");
 
 		for (Statements stats : this.tableStats.values()) {
 			if (stats.deleteStat != null) {
