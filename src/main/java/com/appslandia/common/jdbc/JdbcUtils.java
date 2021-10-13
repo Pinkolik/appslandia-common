@@ -58,6 +58,12 @@ public class JdbcUtils {
 		}
 	}
 
+	public static <T> T executeSingle(StatementImpl stat, ResultSetMapper<T> mapper) throws SQLException {
+		try (ResultSetImpl rs = stat.executeQuery()) {
+			return executeSingle(rs, mapper);
+		}
+	}
+
 	public static <T> T executeSingle(ResultSetImpl rs, ResultSetMapper<T> mapper) throws SQLException {
 		T t = null;
 		boolean rsRead = false;
@@ -72,6 +78,12 @@ public class JdbcUtils {
 		return t;
 	}
 
+	public static <T> List<T> executeList(StatementImpl stat, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
+		try (ResultSetImpl rs = stat.executeQuery()) {
+			return executeList(rs, mapper, list);
+		}
+	}
+
 	public static <T> List<T> executeList(ResultSetImpl rs, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
 		while (rs.next()) {
 			T t = mapper.map(rs);
@@ -80,7 +92,13 @@ public class JdbcUtils {
 		return list;
 	}
 
-	public static <K, V> Map<K, V> executeMap(ResultSetImpl rs, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
+	public static <K, V> Map<K, V> executeMap(StatementImpl stat, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
+		try (ResultSetImpl rs = stat.executeQuery()) {
+			return executeMap(rs, keyColumn, valueColumn, map);
+		}
+	}
+
+	public static <K, V> Map<K, V> executeMap(ResultSet rs, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
 		while (rs.next()) {
 
 			K k = ObjectUtils.cast(rs.getObject(keyColumn));
@@ -89,6 +107,13 @@ public class JdbcUtils {
 			map.put(k, v);
 		}
 		return map;
+	}
+
+	public static <K, V> Map<K, V> executeMap(StatementImpl stat, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
+			throws SQLException {
+		try (ResultSetImpl rs = stat.executeQuery()) {
+			return executeMap(rs, keyMapper, valueMapper, map);
+		}
 	}
 
 	public static <K, V> Map<K, V> executeMap(ResultSetImpl rs, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
