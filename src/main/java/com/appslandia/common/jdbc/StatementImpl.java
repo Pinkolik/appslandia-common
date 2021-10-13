@@ -52,7 +52,8 @@ public class StatementImpl implements PreparedStatement {
 	protected final PreparedStatement stat;
 
 	public StatementImpl(PreparedStatement stat) {
-		this.stat = stat;
+		AssertUtils.assertFalse(stat instanceof StatementImpl);
+		this.stat = AssertUtils.assertNotNull(stat);
 		this.sql = null;
 	}
 

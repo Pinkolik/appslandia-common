@@ -27,6 +27,8 @@ import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 
+import com.appslandia.common.utils.AssertUtils;
+
 /**
  *
  * @author <a href="mailto:haducloc13@gmail.com">Loc Ha</a>
@@ -37,7 +39,8 @@ public class ResultSetImpl implements ResultSet {
 	protected final ResultSet rs;
 
 	public ResultSetImpl(ResultSet rs) {
-		this.rs = rs;
+		AssertUtils.assertFalse(rs instanceof ResultSetImpl);
+		this.rs = AssertUtils.assertNotNull(rs);
 	}
 
 	// Java 8+ Date/Time
