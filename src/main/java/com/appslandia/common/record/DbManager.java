@@ -441,11 +441,11 @@ public class DbManager implements AutoCloseable {
 			if (stats.deleteStat != null) {
 				stats.deleteStat.executeBatch();
 			}
-			if (stats.updateStat != null) {
-				stats.updateStat.executeBatch();
-			}
 			if (stats.insertStat != null) {
 				stats.insertStat.executeBatch();
+			}
+			if (stats.updateStat != null) {
+				stats.updateStat.executeBatch();
 			}
 		}
 	}
@@ -478,11 +478,11 @@ public class DbManager implements AutoCloseable {
 		Collections.reverse(tblStats);
 
 		for (Statements stats : tblStats) {
-			if (stats.insertStat != null) {
-				stats.insertStat.close();
-			}
 			if (stats.updateStat != null) {
 				stats.updateStat.close();
+			}
+			if (stats.insertStat != null) {
+				stats.insertStat.close();
 			}
 			if (stats.deleteStat != null) {
 				stats.deleteStat.close();

@@ -241,12 +241,26 @@ public class Table extends InitializeObject implements Serializable {
 		return this;
 	}
 
+	public Table autoKey(String fieldName, int sqlType) {
+		assertNotInitialized();
+
+		this.fields.add(new Field(fieldName).setKeyType(KeyType.AUTO_KEY).setSqlType(sqlType));
+		return this;
+	}
+
 	public Table keys(String... fieldNames) {
 		assertNotInitialized();
 
 		for (String fieldName : fieldNames) {
 			this.fields.add(new Field(fieldName).setKeyType(KeyType.KEY));
 		}
+		return this;
+	}
+
+	public Table key(String fieldName, int sqlType) {
+		assertNotInitialized();
+
+		this.fields.add(new Field(fieldName).setKeyType(KeyType.KEY).setSqlType(sqlType));
 		return this;
 	}
 
