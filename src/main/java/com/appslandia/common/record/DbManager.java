@@ -250,7 +250,13 @@ public class DbManager implements AutoCloseable {
 		}
 
 		Long count = stats.existsStat.executeScalar();
-		return (count != null) && (count == 1);
+		if (count == null) {
+			return false;
+		}
+		if (count > 1) {
+			throw new IllegalStateException("Duplicate key");
+		}
+		return true;
 	}
 
 	public List<Record> getAll(Table table) throws SQLException {
