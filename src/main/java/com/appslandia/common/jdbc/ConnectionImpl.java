@@ -21,11 +21,17 @@
 package com.appslandia.common.jdbc;
 
 import java.sql.Connection;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import com.appslandia.common.threading.ThreadLocalStorage;
 import com.appslandia.common.utils.AssertUtils;
+import com.appslandia.common.utils.ObjectUtils;
 
 /**
  *
@@ -55,6 +61,128 @@ public class ConnectionImpl implements Connection {
 
 	public String getDsName() {
 		return this.dsName;
+	}
+
+	// Utility methods
+
+	public int executeUpdate(String sql) throws java.sql.SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			return stat.executeUpdate(sql);
+		}
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper) throws java.sql.SQLException {
+		return executeMap(sql, keyMapper, valueMapper, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map) throws java.sql.SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				return JdbcUtils.executeMap(rs, keyMapper, valueMapper, map);
+			}
+		}
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper)
+			throws java.sql.SQLException {
+		return executeMap(sql, params, keyMapper, valueMapper, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
+			throws java.sql.SQLException {
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
+				return JdbcUtils.executeMap(rs, keyMapper, valueMapper, map);
+			}
+		}
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn) throws java.sql.SQLException {
+		return executeMap(sql, keyColumn, valueColumn, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, String keyColumn, String valueColumn, Map<K, V> map) throws java.sql.SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
+			}
+		}
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn) throws java.sql.SQLException {
+		return executeMap(sql, params, keyColumn, valueColumn, new LinkedHashMap<>());
+	}
+
+	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn, Map<K, V> map)
+			throws java.sql.SQLException {
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
+				return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
+			}
+		}
+	}
+
+	public <T> List<T> executeList(String sql, ResultSetMapper<T> mapper) throws java.sql.SQLException {
+		return executeList(sql, mapper, new ArrayList<>());
+	}
+
+	public <T> List<T> executeList(String sql, ResultSetMapper<T> mapper, List<T> list) throws java.sql.SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				return JdbcUtils.executeList(rs, mapper, list);
+			}
+		}
+	}
+
+	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper) throws java.sql.SQLException {
+		return executeList(sql, params, mapper, new ArrayList<>());
+	}
+
+	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper, List<T> list) throws java.sql.SQLException {
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
+				return JdbcUtils.executeList(rs, mapper, list);
+			}
+		}
+	}
+
+	public <T> T executeSingle(String sql, ResultSetMapper<T> mapper) throws java.sql.SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				return JdbcUtils.executeSingle(rs, mapper);
+			}
+		}
+	}
+
+	public <T> T executeScalar(String sql) throws java.sql.SQLException {
+		return executeSingle(sql, rs -> ObjectUtils.cast(rs.getObject(1)));
+	}
+
+	public void executeQuery(String sql, ResultSetHandler handler) throws java.sql.SQLException {
+		try (Statement stat = this.conn.createStatement()) {
+			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				while (rs.next()) {
+					handler.handle(rs);
+				}
+			}
+		}
 	}
 
 	// java.sql.Connection
@@ -338,6 +466,12 @@ public class ConnectionImpl implements Connection {
 
 			this.outer = null;
 			CONNECTION_HOLDER.set(outer);
+		}
+	}
+
+	static void setParameters(StatementImpl stat, Map<String, Object> params) throws java.sql.SQLException {
+		for (Map.Entry<String, Object> param : params.entrySet()) {
+			stat.setObject(param.getKey(), param.getValue());
 		}
 	}
 

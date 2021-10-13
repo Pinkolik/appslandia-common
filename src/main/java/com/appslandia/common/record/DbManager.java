@@ -86,8 +86,9 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	protected void setParameter(StatementImpl stat, Map<String, Object> params) throws SQLException {
+	protected void setParameters(StatementImpl stat, Map<String, Object> params) throws SQLException {
 		for (Map.Entry<String, Object> param : params.entrySet()) {
+
 			stat.setObject(param.getKey(), param.getValue());
 		}
 	}
@@ -296,6 +297,8 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
+	// Utility methods
+
 	public int executeUpdate(String sql) throws SQLException {
 		this.assertNotClosed();
 
@@ -331,7 +334,7 @@ public class DbManager implements AutoCloseable {
 		final Sql pSql = new Sql(sql);
 
 		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
-			setParameter(stat, params);
+			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
 				return JdbcUtils.executeMap(rs, keyMapper, valueMapper, map);
@@ -364,7 +367,7 @@ public class DbManager implements AutoCloseable {
 		final Sql pSql = new Sql(sql);
 
 		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
-			setParameter(stat, params);
+			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
 				return JdbcUtils.executeMap(rs, keyColumn, valueColumn, map);
@@ -397,7 +400,7 @@ public class DbManager implements AutoCloseable {
 		final Sql pSql = new Sql(sql);
 
 		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
-			setParameter(stat, params);
+			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
 				return JdbcUtils.executeList(rs, mapper, list);
