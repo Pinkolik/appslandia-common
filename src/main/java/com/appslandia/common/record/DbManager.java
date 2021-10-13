@@ -136,7 +136,7 @@ public class DbManager implements AutoCloseable {
 						Object generatedKey = rs.getObject(1);
 						record.set(table.getAutoKey().getName(), generatedKey);
 
-						return record.get(table.getAutoKey().getName());
+						return generatedKey;
 					}
 				}
 			}
