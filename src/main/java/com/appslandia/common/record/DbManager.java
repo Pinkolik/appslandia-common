@@ -228,6 +228,7 @@ public class DbManager implements AutoCloseable {
 			}
 		}
 		try (ResultSetImpl rs = stats.getStat.executeQuery()) {
+
 			final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 			return JdbcUtils.executeSingle(rs, r -> RecordUtils.toRecord(r, columnLabels));
 		}
