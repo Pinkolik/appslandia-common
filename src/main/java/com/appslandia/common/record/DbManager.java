@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -478,9 +477,10 @@ public class DbManager implements AutoCloseable {
 
 	private void closeStatements() throws SQLException {
 		List<Statements> tblStats = new ArrayList<>(this.tableStats.values());
-		Collections.reverse(tblStats);
 
-		for (Statements stats : tblStats) {
+		for (int i = tblStats.size() - 1; i >= 0; i--) {
+			Statements stats = tblStats.get(i);
+
 			if (stats.updateStat != null) {
 				stats.updateStat.close();
 			}
