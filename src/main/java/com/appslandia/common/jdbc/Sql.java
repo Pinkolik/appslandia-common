@@ -41,6 +41,7 @@ public class Sql extends InitializeObject implements Serializable {
 
 	public static final int DEFAULT_ARRAY_MAX_LENGTH = 32;
 
+	private String name;
 	private String sql;
 	private Map<String, Integer> arrayLens;
 
@@ -180,6 +181,17 @@ public class Sql extends InitializeObject implements Serializable {
 			indexes[indexes.length - 1] = index;
 		}
 		indexesMap.put(paramName, indexes);
+	}
+
+	public String getName() {
+		initialize();
+		return this.name;
+	}
+
+	public Sql setName(String name) {
+		assertNotInitialized();
+		this.name = name;
+		return this;
 	}
 
 	public String getSql() {
