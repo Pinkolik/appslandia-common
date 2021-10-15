@@ -128,6 +128,8 @@ public class DbManager implements AutoCloseable {
 				}
 			}
 		} else {
+			AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+
 			stat.addBatch();
 		}
 		return rowAffected;
@@ -163,6 +165,8 @@ public class DbManager implements AutoCloseable {
 		if (!addBatch) {
 			rowAffected = stat.executeUpdate();
 		} else {
+			AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+
 			stat.addBatch();
 		}
 		return rowAffected;
@@ -198,6 +202,8 @@ public class DbManager implements AutoCloseable {
 		if (!addBatch) {
 			rowAffected = stat.executeUpdate();
 		} else {
+			AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+
 			stat.addBatch();
 		}
 		return rowAffected;
