@@ -218,10 +218,12 @@ public class Table extends InitializeObject implements Serializable {
 		return this;
 	}
 
-	public Table field(Field field) {
+	public Table fields(Field... fields) {
 		assertNotInitialized();
 
-		this.fields.add(field);
+		for (Field field : fields) {
+			this.fields.add(field);
+		}
 		return this;
 	}
 
