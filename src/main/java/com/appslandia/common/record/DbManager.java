@@ -37,6 +37,7 @@ import com.appslandia.common.jdbc.ResultSetImpl;
 import com.appslandia.common.jdbc.ResultSetMapper;
 import com.appslandia.common.jdbc.Sql;
 import com.appslandia.common.jdbc.StatementImpl;
+import com.appslandia.common.threading.ThreadLocalStorage;
 import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.ObjectUtils;
 
@@ -48,21 +49,14 @@ import com.appslandia.common.utils.ObjectUtils;
 public class DbManager implements AutoCloseable {
 
 	private Connection conn;
-	private boolean internalConn;
 	private Map<String, Statements> tableStats = new LinkedHashMap<>();
 
 	public DbManager() throws SQLException {
 		this(DbManager.getDataSource());
 	}
 
-	public DbManager(Connection conn) {
-		this.conn = conn;
-		this.internalConn = false;
-	}
-
 	public DbManager(DataSource dataSource) throws SQLException {
 		this.conn = dataSource.getConnection();
-		this.internalConn = true;
 	}
 
 	public Connection getConnection() {
@@ -437,7 +431,7 @@ public class DbManager implements AutoCloseable {
 
 	public void executeBatch() throws SQLException {
 		this.assertNotClosed();
-		AssertUtils.assertState(!this.conn.getAutoCommit(), "No transaction.");
+		AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
 
 		for (Statements stats : this.tableStats.values()) {
 			if (stats.deleteStat != null) {
@@ -452,9 +446,14 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public void beginTransaction() throws SQLException {
+	public void setAutoCommit(boolean autoCommit) throws SQLException {
 		this.assertNotClosed();
-		this.conn.setAutoCommit(false);
+		this.conn.setAutoCommit(autoCommit);
+	}
+
+	public boolean getAutoCommit() throws SQLException {
+		this.assertNotClosed();
+		return this.conn.getAutoCommit();
 	}
 
 	public void commit() throws SQLException {
@@ -504,22 +503,27 @@ public class DbManager implements AutoCloseable {
 		if (!this.closed) {
 			closeStatements();
 
-			if (this.internalConn) {
-				this.conn.close();
+			if (!this.conn.getAutoCommit()) {
+				this.conn.setAutoCommit(true);
 			}
+
+			this.conn.close();
 			this.closed = true;
 		}
 	}
 
-	private static DataSource __dataSource;
+	private static final ThreadLocalStorage<DataSource> DS_HOLDER = new ThreadLocalStorage<>();
 
-	public static DataSource getDataSource() {
-		return AssertUtils.assertNotNull(__dataSource);
+	public static DataSource getDataSource() throws IllegalStateException {
+		DataSource ds = DS_HOLDER.get();
+		if (ds == null) {
+			throw new IllegalStateException("No current DataSource found in the current thread.");
+		}
+		return ds;
 	}
 
-	public static void setDataSource(DataSource dataSource) {
-		AssertUtils.assertNull(dataSource);
-		__dataSource = dataSource;
+	public static void setDataSource(DataSource ds) {
+		DS_HOLDER.set(ds);
 	}
 
 	static class Statements {
