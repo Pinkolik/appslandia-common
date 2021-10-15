@@ -272,6 +272,22 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
+	public <T> List<Record> executeList(String sql, Map<String, Object> params) throws SQLException {
+		this.assertNotClosed();
+
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
+
+				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
+				return JdbcUtils.executeList(rs, r -> RecordUtils.toRecord(r, columnLabels), new ArrayList<>());
+			}
+		}
+	}
+
 	public Record executeSingle(String sql) throws SQLException {
 		this.assertNotClosed();
 
