@@ -20,7 +20,6 @@
 
 package com.appslandia.common.jdbc;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -140,7 +139,7 @@ public class StatementImpl implements PreparedStatement {
 		return executeSingle(rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
-	public void executeQuery(ResultSetHandler handler) throws java.sql.SQLException {
+	public void executeQuery(ResultSetHandler handler) throws Exception {
 		try (ResultSetImpl rs = this.executeQuery()) {
 			while (rs.next()) {
 				handler.handle(rs);
@@ -148,7 +147,7 @@ public class StatementImpl implements PreparedStatement {
 		}
 	}
 
-	public void executeStream(String streamLabel, OutputStream os, ResultSetHandler handler) throws java.sql.SQLException, IOException {
+	public void executeStream(String streamLabel, OutputStream os, ResultSetHandler handler) throws Exception {
 		try (ResultSetImpl rs = this.executeQuery()) {
 			boolean rsRead = false;
 
@@ -167,7 +166,7 @@ public class StatementImpl implements PreparedStatement {
 		}
 	}
 
-	public void executeStream(String streamLabel, Writer w, ResultSetHandler handler) throws java.sql.SQLException, IOException {
+	public void executeStream(String streamLabel, Writer w, ResultSetHandler handler) throws Exception {
 		try (ResultSetImpl rs = this.executeQuery()) {
 			boolean rsRead = false;
 
@@ -186,7 +185,7 @@ public class StatementImpl implements PreparedStatement {
 		}
 	}
 
-	public void executeNStream(String streamLabel, Writer w, ResultSetHandler handler) throws java.sql.SQLException, IOException {
+	public void executeNStream(String streamLabel, Writer w, ResultSetHandler handler) throws Exception {
 		try (ResultSetImpl rs = this.executeQuery()) {
 			boolean rsRead = false;
 

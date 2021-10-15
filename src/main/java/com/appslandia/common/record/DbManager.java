@@ -423,7 +423,7 @@ public class DbManager implements AutoCloseable {
 		return executeSingle(sql, rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
-	public void executeQuery(String sql, ResultSetHandler handler) throws SQLException {
+	public void executeQuery(String sql, ResultSetHandler handler) throws Exception {
 		this.assertNotClosed();
 
 		try (Statement stat = this.conn.createStatement()) {

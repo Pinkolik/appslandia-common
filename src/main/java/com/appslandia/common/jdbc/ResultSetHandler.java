@@ -28,5 +28,5 @@ package com.appslandia.common.jdbc;
 @FunctionalInterface
 public interface ResultSetHandler {
 
-	void handle(ResultSetImpl rs) throws java.sql.SQLException;
+	void handle(ResultSetImpl rs) throws Exception;
 }

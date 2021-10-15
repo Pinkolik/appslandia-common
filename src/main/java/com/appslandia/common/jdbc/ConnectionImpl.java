@@ -174,7 +174,7 @@ public class ConnectionImpl implements Connection {
 		return executeSingle(sql, rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
-	public void executeQuery(String sql, ResultSetHandler handler) throws java.sql.SQLException {
+	public void executeQuery(String sql, ResultSetHandler handler) throws Exception {
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
 
