@@ -38,7 +38,6 @@ import com.appslandia.common.jdbc.ResultSetMapper;
 import com.appslandia.common.jdbc.Sql;
 import com.appslandia.common.jdbc.StatementImpl;
 import com.appslandia.common.threading.ThreadLocalStorage;
-import com.appslandia.common.utils.AssertUtils;
 import com.appslandia.common.utils.ObjectUtils;
 
 /**
@@ -128,7 +127,7 @@ public class DbManager implements AutoCloseable {
 				}
 			}
 		} else {
-			AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+			assertNotAutoCommit();
 
 			stat.addBatch();
 		}
@@ -165,7 +164,7 @@ public class DbManager implements AutoCloseable {
 		if (!addBatch) {
 			rowAffected = stat.executeUpdate();
 		} else {
-			AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+			assertNotAutoCommit();
 
 			stat.addBatch();
 		}
@@ -202,7 +201,7 @@ public class DbManager implements AutoCloseable {
 		if (!addBatch) {
 			rowAffected = stat.executeUpdate();
 		} else {
-			AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+			assertNotAutoCommit();
 
 			stat.addBatch();
 		}
@@ -426,7 +425,7 @@ public class DbManager implements AutoCloseable {
 
 	public void executeBatch() throws SQLException {
 		this.assertNotClosed();
-		AssertUtils.assertState(!this.conn.getAutoCommit(), "setAutoCommit(false) is required.");
+		assertNotAutoCommit();
 
 		for (StatementImpl stat : this.tableStats.values()) {
 			stat.executeBatch();
@@ -445,12 +444,22 @@ public class DbManager implements AutoCloseable {
 
 	public void commit() throws SQLException {
 		this.assertNotClosed();
+		assertNotAutoCommit();
+
 		this.conn.commit();
 	}
 
 	public void rollback() throws SQLException {
 		this.assertNotClosed();
+		assertNotAutoCommit();
+
 		this.conn.rollback();
+	}
+
+	protected void assertNotAutoCommit() throws SQLException {
+		if (this.conn.getAutoCommit()) {
+			throw new SQLException("auto commit must be disabled.");
+		}
 	}
 
 	protected void assertNotClosed() throws SQLException {
