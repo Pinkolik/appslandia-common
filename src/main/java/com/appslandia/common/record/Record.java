@@ -21,6 +21,7 @@
 package com.appslandia.common.record;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +38,7 @@ public class Record extends CaseInsensitiveMap<Object> {
 	private static final long serialVersionUID = 1L;
 
 	public Record() {
-		super();
+		super(new LinkedHashMap<>());
 	}
 
 	public Record(Map<String, Object> innerMap) {
