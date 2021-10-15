@@ -47,7 +47,6 @@ public class Table extends InitializeObject implements Serializable {
 
 	private Sql getSql;
 	private Sql existsSql;
-	private String getAllSql;
 
 	public Table() {
 	}
@@ -85,13 +84,12 @@ public class Table extends InitializeObject implements Serializable {
 			throw new IllegalArgumentException("No keys found.");
 		}
 
-		this.insertSql = new Sql().sql(this.buildInsertSQL());
-		this.updateSql = new Sql().sql(this.buildUpdateSQL());
-		this.deleteSql = new Sql().sql(this.buildDeleteSQL());
+		this.insertSql = new Sql().sql(this.buildInsertSQL()).setName(this.name + ".insertSql");
+		this.updateSql = new Sql().sql(this.buildUpdateSQL()).setName(this.name + ".updateSql");
+		this.deleteSql = new Sql().sql(this.buildDeleteSQL()).setName(this.name + ".deleteSql");
 
-		this.getSql = new Sql().sql(this.buildGetSQL());
-		this.existsSql = new Sql().sql(this.buildExistsSQL());
-		this.getAllSql = this.buildGetAllSQL();
+		this.getSql = new Sql().sql(this.buildGetSQL()).setName(this.name + ".getSql");
+		this.existsSql = new Sql().sql(this.buildExistsSQL()).setName(this.name + ".existsSql");
 	}
 
 	protected String buildInsertSQL() {
@@ -292,10 +290,5 @@ public class Table extends InitializeObject implements Serializable {
 	public Sql getExistsSql() {
 		initialize();
 		return this.existsSql;
-	}
-
-	public String getGetAllSql() {
-		initialize();
-		return this.getAllSql;
 	}
 }
