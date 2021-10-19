@@ -291,13 +291,21 @@ public class DbManager implements AutoCloseable {
 	public Record executeSingle(String sql) throws SQLException {
 		this.assertNotClosed();
 
-		try (Statement stat = this.conn.createStatement()) {
-			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+		return executeSingle(sql, rs -> {
 
-				final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
-				return JdbcUtils.executeSingle(rs, r -> RecordUtils.toRecord(r, columnLabels));
-			}
-		}
+			final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
+			return RecordUtils.toRecord(rs, columnLabels);
+		});
+	}
+
+	public Record executeSingle(String sql, Map<String, Object> params) throws SQLException {
+		this.assertNotClosed();
+
+		return executeSingle(sql, params, rs -> {
+
+			final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
+			return RecordUtils.toRecord(rs, columnLabels);
+		});
 	}
 
 	// Utility methods
@@ -307,6 +315,18 @@ public class DbManager implements AutoCloseable {
 
 		try (Statement stat = this.conn.createStatement()) {
 			return stat.executeUpdate(sql);
+		}
+	}
+
+	public int executeUpdate(String sql, Map<String, Object> params) throws SQLException {
+		this.assertNotClosed();
+
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			return stat.executeUpdate();
 		}
 	}
 
@@ -422,8 +442,26 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
+	public <T> T executeSingle(String sql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
+		this.assertNotClosed();
+
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
+				return JdbcUtils.executeSingle(rs, mapper);
+			}
+		}
+	}
+
 	public <T> T executeScalar(String sql) throws SQLException {
 		return executeSingle(sql, rs -> ObjectUtils.cast(rs.getObject(1)));
+	}
+
+	public <T> T executeScalar(String sql, Map<String, Object> params) throws SQLException {
+		return executeSingle(sql, params, rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
 	public void executeQuery(String sql, ResultSetHandler handler) throws Exception {
@@ -431,6 +469,23 @@ public class DbManager implements AutoCloseable {
 
 		try (Statement stat = this.conn.createStatement()) {
 			try (ResultSetImpl rs = new ResultSetImpl(stat.executeQuery(sql))) {
+
+				while (rs.next()) {
+					handler.handle(rs);
+				}
+			}
+		}
+	}
+
+	public void executeQuery(String sql, Map<String, Object> params, ResultSetHandler handler) throws Exception {
+		this.assertNotClosed();
+
+		final Sql pSql = new Sql(sql);
+
+		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+			setParameters(stat, params);
+
+			try (ResultSetImpl rs = stat.executeQuery()) {
 
 				while (rs.next()) {
 					handler.handle(rs);
