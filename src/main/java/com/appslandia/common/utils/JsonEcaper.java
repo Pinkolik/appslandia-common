@@ -49,8 +49,8 @@ public class JsonEcaper {
 		ESCAPE_JSON['"'] = "\\\"".toCharArray();
 		ESCAPE_JSON['\\'] = "\\\\".toCharArray();
 		ESCAPE_JSON['/'] = "\\/".toCharArray();
-		ESCAPE_JSON['\b'] = "\\b".toCharArray();
 
+		ESCAPE_JSON['\b'] = "\\b".toCharArray();
 		ESCAPE_JSON['\f'] = "\\f".toCharArray();
 		ESCAPE_JSON['\n'] = "\\n".toCharArray();
 		ESCAPE_JSON['\r'] = "\\r".toCharArray();
@@ -69,12 +69,12 @@ public class JsonEcaper {
 		out.append(hs);
 	}
 
-	public static String escapeJson(String s) {
+	public static String escapeValue(String s) {
 		if (s == null) {
 			return null;
 		}
 		try (StringWriter out = new StringWriter((int) (s.length() * 1.25f))) {
-			escapeJson(out, s);
+			escapeValue(out, s);
 			return out.toString();
 
 		} catch (IOException ex) {
@@ -82,7 +82,7 @@ public class JsonEcaper {
 		}
 	}
 
-	static void escapeJson(Writer out, String s) throws IOException {
+	static void escapeValue(Writer out, String s) throws IOException {
 		int start = 0;
 		char[] srcChars = s.toCharArray();
 		int length = s.length();
