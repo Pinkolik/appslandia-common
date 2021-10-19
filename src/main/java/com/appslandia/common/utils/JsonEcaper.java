@@ -82,7 +82,7 @@ public class JsonEcaper {
 		}
 	}
 
-	static void escapeValue(Writer out, String s) throws IOException {
+	public static void escapeValue(Writer out, String s) throws IOException {
 		int start = 0;
 		char[] srcChars = s.toCharArray();
 		int length = s.length();
