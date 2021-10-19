@@ -272,12 +272,10 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public <T> List<Record> executeList(String sql, Map<String, Object> params) throws SQLException {
+	public <T> List<Record> executeList(String pSql, Map<String, Object> params) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
@@ -298,10 +296,10 @@ public class DbManager implements AutoCloseable {
 		});
 	}
 
-	public Record executeSingle(String sql, Map<String, Object> params) throws SQLException {
+	public Record executeSingle(String pSql, Map<String, Object> params) throws SQLException {
 		this.assertNotClosed();
 
-		return executeSingle(sql, params, rs -> {
+		return executeSingle(pSql, params, rs -> {
 
 			final String[] columnLabels = JdbcUtils.getColumnLabels(rs);
 			return RecordUtils.toRecord(rs, columnLabels);
@@ -318,12 +316,10 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public int executeUpdate(String sql, Map<String, Object> params) throws SQLException {
+	public int executeUpdate(String pSql, Map<String, Object> params) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			return stat.executeUpdate();
@@ -345,18 +341,16 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper)
+	public <K, V> Map<K, V> executeMap(String pSql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper)
 			throws SQLException {
-		return executeMap(sql, params, keyMapper, valueMapper, new LinkedHashMap<>());
+		return executeMap(pSql, params, keyMapper, valueMapper, new LinkedHashMap<>());
 	}
 
-	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
+	public <K, V> Map<K, V> executeMap(String pSql, Map<String, Object> params, ResultSetMapper<K> keyMapper, ResultSetMapper<V> valueMapper, Map<K, V> map)
 			throws SQLException {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
@@ -380,16 +374,14 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn) throws SQLException {
-		return executeMap(sql, params, keyColumn, valueColumn, new LinkedHashMap<>());
+	public <K, V> Map<K, V> executeMap(String pSql, Map<String, Object> params, String keyColumn, String valueColumn) throws SQLException {
+		return executeMap(pSql, params, keyColumn, valueColumn, new LinkedHashMap<>());
 	}
 
-	public <K, V> Map<K, V> executeMap(String sql, Map<String, Object> params, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
+	public <K, V> Map<K, V> executeMap(String pSql, Map<String, Object> params, String keyColumn, String valueColumn, Map<K, V> map) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
@@ -413,16 +405,14 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
-		return executeList(sql, params, mapper, new ArrayList<>());
+	public <T> List<T> executeList(String pSql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
+		return executeList(pSql, params, mapper, new ArrayList<>());
 	}
 
-	public <T> List<T> executeList(String sql, Map<String, Object> params, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
+	public <T> List<T> executeList(String pSql, Map<String, Object> params, ResultSetMapper<T> mapper, List<T> list) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
@@ -442,12 +432,10 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public <T> T executeSingle(String sql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
+	public <T> T executeSingle(String pSql, Map<String, Object> params, ResultSetMapper<T> mapper) throws SQLException {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
@@ -460,8 +448,8 @@ public class DbManager implements AutoCloseable {
 		return executeSingle(sql, rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
-	public <T> T executeScalar(String sql, Map<String, Object> params) throws SQLException {
-		return executeSingle(sql, params, rs -> ObjectUtils.cast(rs.getObject(1)));
+	public <T> T executeScalar(String pSql, Map<String, Object> params) throws SQLException {
+		return executeSingle(pSql, params, rs -> ObjectUtils.cast(rs.getObject(1)));
 	}
 
 	public void executeQuery(String sql, ResultSetHandler handler) throws Exception {
@@ -477,12 +465,10 @@ public class DbManager implements AutoCloseable {
 		}
 	}
 
-	public void executeQuery(String sql, Map<String, Object> params, ResultSetHandler handler) throws Exception {
+	public void executeQuery(String pSql, Map<String, Object> params, ResultSetHandler handler) throws Exception {
 		this.assertNotClosed();
 
-		final Sql pSql = new Sql(sql);
-
-		try (StatementImpl stat = new StatementImpl(this.conn, pSql)) {
+		try (StatementImpl stat = new StatementImpl(this.conn, new Sql(pSql))) {
 			setParameters(stat, params);
 
 			try (ResultSetImpl rs = stat.executeQuery()) {
